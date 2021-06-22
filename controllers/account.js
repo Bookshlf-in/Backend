@@ -4,7 +4,6 @@ const User = require("../models/users");
 const sendEmailOtp = require("../email/sendEmailOtp");
 const { v1: uuidv1 } = require("uuid");
 const crypto = require("crypto");
-const { validationResult } = require("express-validator");
 const sendEmail = require("../email/sendEmail");
 const {
   welcomeEmailTemplate,
@@ -12,15 +11,6 @@ const {
 } = require("../email/emailTemplates");
 
 exports.verifyEmail = async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      error: errors.array()[0].msg,
-      errorParam: errors.array()[0].param,
-    });
-  }
-
   const { email, otp } = req.body;
 
   const updatedEmailOtp = await EmailOtp.updateMany(
@@ -70,15 +60,6 @@ exports.verifyEmail = async (req, res) => {
 };
 
 exports.sendVerifyEmailOtp = async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      error: errors.array()[0].msg,
-      errorParam: errors.array()[0].param,
-    });
-  }
-
   const { email } = req.body;
 
   const user = await User.findOne({ email, emailVerified: true }, (error) => {
@@ -101,15 +82,6 @@ exports.sendVerifyEmailOtp = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      error: errors.array()[0].msg,
-      errorParam: errors.array()[0].param,
-    });
-  }
-
   const { email, otp, password } = req.body;
 
   const updatedEmailOtp = await EmailOtp.updateMany(
@@ -164,15 +136,6 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.sendResetPasswordOtp = async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      error: errors.array()[0].msg,
-      errorParam: errors.array()[0].param,
-    });
-  }
-
   const { email } = req.body;
 
   const user = await User.findOne({ email, emailVerified: true }, (error) => {

@@ -1,5 +1,4 @@
 const User = require("../models/users");
-const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const sendEmailOtp = require("../email/sendEmailOtp");
@@ -7,15 +6,6 @@ const { EMAIL_VERIFICATION } = require("../email/otp.types");
 
 exports.signUp = async (req, res) => {
   try {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(422).json({
-        error: errors.array()[0].msg,
-        errorParam: errors.array()[0].param,
-      });
-    }
-
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser && existingUser.emailVerified) {
       return res.status(400).json({
@@ -52,14 +42,6 @@ exports.signUp = async (req, res) => {
 
 exports.signIn = (req, res) => {
   const { email, password } = req.body;
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      error: errors.array()[0].msg,
-      errorParam: errors.array()[0].param,
-    });
-  }
 
   User.findOne({ email, emailVerified: true }, (error, user) => {
     if (error || !user) {
