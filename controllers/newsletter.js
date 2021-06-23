@@ -22,7 +22,7 @@ exports.newsletterSubscribe = (req, res) => {
         }
         return res.json({
           email: newsletter.email,
-          msg: "Subscription successful",
+          msg: "Added subscription",
         });
       });
     }
@@ -50,7 +50,7 @@ exports.newsletterUnsubscribe = (req, res) => {
         }
         return res.json({
           email: email,
-          msg: "Successfully unsubscribed",
+          msg: "Removed subscription",
         });
       });
     }
