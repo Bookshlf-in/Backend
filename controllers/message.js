@@ -8,7 +8,7 @@ exports.sendMessage = (req, res) => {
         error: "Failed to send message",
       });
     } else {
-      res.json({ ...message._doc, msg: "Message send" });
+      res.json({ msg: "Message send" });
     }
   });
 };
