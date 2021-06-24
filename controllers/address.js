@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 
 exports.addAddress = (req, res) => {
   req.body.userId = req.auth._id;
-
   try {
     const address = new Addresses(req.body);
     address.save((error, address) => {
@@ -37,7 +36,12 @@ exports.getAddress = (req, res) => {
 };
 
 exports.getAddressList = async (req, res) => {
-  Addresses.find({ userId: req.auth._id }, (error, address) => {
+  const query = Addresses.find({ userId: req.auth._id, visible: true }).select({
+    userId: 0,
+    visible: 0,
+    __v: 0,
+  });
+  query.exec((error, address) => {
     if (error) {
       if (error) {
         console.log("Error finding address in /getAddressList", error);
@@ -54,7 +58,11 @@ exports.deleteAddress = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.body.addressId)) {
     return res.status(400).json({ error: "Address does not exist" });
   }
-  Addresses.findOne({ _id: req.body.addressId }, (error, address) => {
+  const query = Addresses.findOne({ _id: req.body.addressId }).select({
+    _id: 0,
+    userId: 1,
+  });
+  query.exec((error, address) => {
     if (error || !address) {
       if (error) {
         console.log("Error finding address in /deleteAddress", error);
@@ -67,17 +75,21 @@ exports.deleteAddress = async (req, res) => {
         error: "You are not authorized to delete this address",
       });
     } else {
-      Addresses.deleteOne({ _id: req.body.addressId }, (error, address) => {
-        if (error || !address) {
-          if (error) {
-            console.log("Error deleting address in /deleteAddress", error);
+      Addresses.updateOne(
+        { _id: req.body.addressId },
+        { visible: false },
+        (error, address) => {
+          if (error || !address) {
+            if (error) {
+              console.log("Error deleting address in /deleteAddress", error);
+            }
+            return res.status(400).json({
+              error: "Address does not exist",
+            });
           }
-          return res.status(400).json({
-            error: "Address does not exist",
-          });
+          return res.json({ msg: "Address deleted successfully" });
         }
-        return res.json({ msg: "Address deleted successfully" });
-      });
+      );
     }
   });
 };
