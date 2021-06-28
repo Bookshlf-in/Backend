@@ -9,7 +9,7 @@ exports.newsletterSubscribe = (req, res) => {
         error: "Failed to subscribe",
       });
     } else if (newsletter) {
-      return res.status(500).json({
+      return res.status(400).json({
         error: "Already subscribed",
       });
     } else {
@@ -38,7 +38,7 @@ exports.newsletterUnsubscribe = (req, res) => {
         error: "Failed to unsubscribe",
       });
     } else if (!newsletter) {
-      return res.status(500).json({
+      return res.status(400).json({
         error: "No subscription found",
       });
     } else {
