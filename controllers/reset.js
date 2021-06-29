@@ -7,15 +7,15 @@ const EmailOtp = require("../models/emailOtps");
 
 exports.reset = async (req, res) => {
   try {
-    await User.collection.drop();
-    await Addresses.collection.drop();
-    await Messages.collection.drop();
-    await Newsletters.collection.drop();
-    await WebsiteReviews.collection.drop();
-    await EmailOtp.collection.drop();
+    await User.deleteMany().exec();
+    await Addresses.deleteMany().exec();
+    await Messages.deleteMany().exec();
+    await Newsletters.deleteMany().exec();
+    await WebsiteReviews.deleteMany().exec();
+    await EmailOtp.deleteMany().exec();
     res.send("Reset successfull");
   } catch (error) {
     console.log("Error in /reset", error);
-    res.status(500).send("Reset Failed");
+    res.status(500).json({ msg: "Reset Failed", error: error });
   }
 };
