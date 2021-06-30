@@ -1,5 +1,5 @@
 const WebsiteReviews = require("../models/websiteReviews");
-const User = require("../models/users");
+const Users = require("../models/users");
 
 exports.getWebsiteReview = (req, res) => {
   const query = WebsiteReviews.findOne({ userId: req.auth._id }).select({
@@ -28,7 +28,7 @@ exports.updateWebsiteReview = (req, res) => {
     });
   }
 
-  const query = User.findOne({ _id: obj.userId }).select({ _id: 0, name: 1 });
+  const query = Users.findOne({ _id: obj.userId }).select({ _id: 0, name: 1 });
   query.exec((error, user) => {
     if (error) {
       console.log("Error finding user at /updateWebsiteReview", error);

@@ -1,4 +1,4 @@
-const User = require("../models/users");
+const Users = require("../models/users");
 const Addresses = require("../models/addresses");
 const Messages = require("../models/messages");
 const Newsletters = require("../models/newsletters.js");
@@ -7,7 +7,7 @@ const EmailOtp = require("../models/emailOtps");
 
 exports.reset = async (req, res) => {
   try {
-    await User.deleteMany().exec();
+    await Users.deleteMany().exec();
     await Addresses.deleteMany().exec();
     await Messages.deleteMany().exec();
     await Newsletters.deleteMany().exec();

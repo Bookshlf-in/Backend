@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     salt: String,
     roles: {
       type: Array,
-      default: ["user"],
+      default: ["customer"],
     },
     email: {
       type: String,
@@ -62,4 +62,4 @@ userSchema.methods = {
   },
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Users", userSchema);

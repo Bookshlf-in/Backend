@@ -1,4 +1,4 @@
-const User = require("../models/users");
+const Users = require("../models/users");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const sendEmailOtp = require("../email/sendEmailOtp");
@@ -6,20 +6,25 @@ const { EMAIL_VERIFICATION } = require("../email/otp.types");
 
 exports.signUp = async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email });
+    const existingUser = await Users.findOne({ email: req.body.email });
     if (existingUser && existingUser.emailVerified) {
       return res.status(400).json({
-        error: "Email already registered",
+        errors: [
+          {
+            error: "Email already registered",
+            param: "email",
+          },
+        ],
       });
     } else if (existingUser && !existingUser.emailVerified) {
-      await User.deleteOne({ email: req.body.email }, (error) => {
+      await Users.deleteOne({ email: req.body.email }, (error) => {
         if (error) {
           console.log("Error deleting existing user while signup", error);
         }
       });
     }
 
-    const user = new User(req.body);
+    const user = new Users(req.body);
     user.save((error, user) => {
       if (error) {
         return res.status(400).json({
@@ -30,9 +35,8 @@ exports.signUp = async (req, res) => {
       sendEmailOtp(EMAIL_VERIFICATION, user.email);
 
       res.json({
-        id: user._id,
-        name: user.name,
         email: user.email,
+        roles: user.roles,
       });
     });
   } catch (error) {
@@ -43,37 +47,43 @@ exports.signUp = async (req, res) => {
 exports.signIn = (req, res) => {
   const { email, password } = req.body;
 
-  User.findOne({ email, emailVerified: true }, (error, user) => {
+  Users.findOne({ email, emailVerified: true }, (error, user) => {
     if (error || !user) {
       if (error) {
         console.log("Error finding user while signin", error);
       }
       return res.status(400).json({
-        error: "Email does not exists",
+        errors: [
+          {
+            error: "Email does not exists",
+            param: "email",
+          },
+        ],
       });
     }
 
     if (!user.authenticate(password)) {
-      return res.status(401).json({
-        error: "Email / Password incorrect",
+      return res.status(400).json({
+        errors: [
+          {
+            error: "Incorrect password",
+            param: "password",
+          },
+        ],
       });
     }
 
-    // Create token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    // Put token in cookie
     res.cookie("token", token, { expiresIn: "60d" });
 
-    // Send response to front end
-    const { _id, name, email, role } = user;
-    return res.json({ token, user: { _id, name, email, role } });
+    return res.json({ token, email: user.email, roles: user.roles });
   });
 };
 
 exports.signOut = (req, res) => {
   res.clearCookie("token");
   res.json({
-    message: "Signed out successfully",
+    msg: "Signed out",
   });
 };
 
@@ -96,10 +106,31 @@ exports.isAuthenticated = (req, res, next) => {
 };
 
 exports.isAdmin = (req, res, next) => {
-  if (req.profile.role === 0) {
-    return res.status(403).json({
-      error: "Access denied, You are not ADMIN",
-    });
-  }
-  next();
+  const query = Users.findOne({ _id: req.auth._id }).select({
+    _id: 0,
+    roles: 1,
+  });
+  query.exec((error, user) => {
+    if (error || !user || !user.roles.includes("admin")) {
+      return res.status(403).json({
+        error: "You are not admin",
+      });
+    }
+    next();
+  });
+};
+
+exports.isSeller = (req, res, next) => {
+  const query = Users.findOne({ _id: req.auth._id }).select({
+    _id: 0,
+    roles: 1,
+  });
+  query.exec((error, user) => {
+    if (error || !user || !user.roles.includes("seller")) {
+      return res.status(403).json({
+        error: "You are not seller",
+      });
+    }
+    next();
+  });
 };
