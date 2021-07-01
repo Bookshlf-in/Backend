@@ -73,13 +73,17 @@ exports.signIn = (req, res) => {
       });
     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    res.cookie("token", token, {
+    let day = new Date();
+    day.setDate(day.getDay() + 30);
+    const tokenOptions = {
+      httpOnly: true,
       sameSite: "none",
       secure: true,
-      expiresIn: "60d",
-    });
+      expires: day,
+    };
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
+    res.cookie("token", token, tokenOptions);
     return res.json({ token, email: user.email, roles: user.roles });
   });
 };
