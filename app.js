@@ -24,8 +24,9 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: true,
     credentials: true,
+    origin: ["http://localhost:3000", "https://bookshlf.web.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
