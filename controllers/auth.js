@@ -74,10 +74,9 @@ exports.signIn = (req, res) => {
     }
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    const url = new URL(req.headers.origin);
     res.cookie("token", token, {
-      domain: url.hostname,
-      httpOnly: true,
+      sameSite: "none",
+      secure: true,
       expiresIn: "60d",
     });
 
