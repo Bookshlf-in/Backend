@@ -22,7 +22,12 @@ mongoose
 //Middlewares
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({credentials: true, origin: process.env.CORS_ORIGIN }));
+app.use(
+  cors({
+    credentials: true,
+    origin: ["https://bookshlf.web.app", "http://localhost:3000"],
+  })
+);
 
 //My Routes
 app.get("/", (req, res) => res.send("Hello Bookshlf"));

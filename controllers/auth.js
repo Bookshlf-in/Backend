@@ -92,7 +92,7 @@ exports.isSignedIn = expressJwt({
   secret: process.env.JWT_SECRET,
   algorithms: ["HS256"],
   userProperty: "auth",
-  getToken: (req) => (req.cookies.token)
+  getToken: (req) => req.cookies.token,
 });
 
 // Custom middlewares
