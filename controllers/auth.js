@@ -79,6 +79,7 @@ exports.signIn = (req, res) => {
       domain: "localhost",
       httpOnly: true,
       expires: day,
+      sameSite: "lax"
     };
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
