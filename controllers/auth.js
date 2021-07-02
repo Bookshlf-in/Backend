@@ -79,7 +79,8 @@ exports.signIn = (req, res) => {
     const cookieOptions = {
       path: "/",
       expires: day,
-      sameSite: "strict"
+      sameSite: "none",
+      secure: true,
     };
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
