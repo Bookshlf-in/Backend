@@ -76,7 +76,7 @@ exports.signIn = (req, res) => {
     let day = new Date();
     day.setDate(day.getDay() + 30);
     const cookieOptions = {
-      domain: "localhost",
+      domain: ".app.localhost",
       httpOnly: true,
       expires: day,
       sameSite: "lax"
