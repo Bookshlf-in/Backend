@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const sendEmailOtp = require("../email/sendEmailOtp");
 const { EMAIL_VERIFICATION } = require("../email/otp.types");
+require("dotenv").config();
 
 exports.signUp = async (req, res) => {
   try {
@@ -78,7 +79,8 @@ exports.signIn = (req, res) => {
     const cookieOptions = {
       path: "/",
       expires: day,
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
     };
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
