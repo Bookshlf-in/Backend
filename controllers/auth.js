@@ -76,10 +76,10 @@ exports.signIn = (req, res) => {
     let day = new Date();
     day.setDate(day.getDay() + 30);
     const cookieOptions = {
-      domain: ".app.localhost",
-      httpOnly: true,
+      domain: ".localhost",
+      path: "/",
       expires: day,
-      sameSite: "lax"
+      sameSite: "lax",
     };
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
