@@ -208,3 +208,20 @@ exports.sendResetPasswordOtp = async (req, res) => {
     msg: "OTP send",
   });
 };
+
+exports.getUserProfile = (req, res) => {
+  const query = Users.findOne({ _id: req.auth._id }).select({
+    _id: 0,
+    name: 1,
+    roles: 1,
+    email: 1,
+    createdAt: 1,
+  });
+  query.exec((error, user) => {
+    if (error) {
+      console.log("Error finding user in getUserProfile", error);
+      return res.status(500).json({ error: "Some error occurred" });
+    }
+    res.json(user);
+  });
+};

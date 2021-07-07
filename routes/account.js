@@ -3,11 +3,13 @@ const router = express.Router();
 const { check } = require("express-validator");
 const { handleValidationError } = require("../functions/validator");
 
+const { isSignedIn } = require("../controllers/auth");
 const {
   verifyEmail,
   sendVerifyEmailOtp,
   resetPassword,
   sendResetPasswordOtp,
+  getUserProfile,
 } = require("../controllers/account");
 
 router.post(
@@ -49,5 +51,7 @@ router.post(
   handleValidationError,
   resetPassword
 );
+
+router.get("/getUserProfile", isSignedIn, getUserProfile);
 
 module.exports = router;
