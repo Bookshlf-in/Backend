@@ -65,9 +65,7 @@ exports.updateSellerProfile = (req, res) => {
   if (req.body.intro) obj.intro = req.body.intro;
   if (req.body.photo) obj.photo = req.body.photo;
 
-  const query = SellerProfiles.updateOne({ userId: req.auth._id }, obj, {
-    upsert: true,
-  });
+  const query = SellerProfiles.updateOne({ userId: req.auth._id }, obj);
   query.exec((error, sellerProfile) => {
     if (error) {
       return res.status(500).json({ error: "Failed to update profile" });
