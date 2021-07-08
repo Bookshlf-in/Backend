@@ -19,10 +19,10 @@ exports.addAddress = (req, res) => {
 };
 
 exports.getAddress = (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.addressId)) {
+  if (!mongoose.Types.ObjectId.isValid(req.query.addressId)) {
     return res.status(400).json({ error: "Address does not exist" });
   }
-  Addresses.findOne({ _id: req.body.addressId }, (error, address) => {
+  Addresses.findOne({ _id: req.query.addressId }, (error, address) => {
     if (error || !address) {
       if (error) {
         console.log("Error finding address in /getAddress", error);
