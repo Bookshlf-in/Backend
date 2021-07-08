@@ -132,3 +132,39 @@ exports.deleteBook = (req, res) => {
     }
   });
 };
+
+exports.updateBook = (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.body.bookId)) {
+    return res.status(400).json({ error: "Book does not exist" });
+  }
+  const query = Books.findOne({ _id: req.body.bookId }).select({
+    _id: 0,
+    sellerId: 1,
+  });
+  query.exec((error, book) => {
+    if (error || !book || book.status == "Deleted") {
+      if (error) {
+        console.log("Error finding book in /updateBook", error);
+      }
+      return res.status(400).json({
+        error: "Book does not exist",
+      });
+    } else if (!book.sellerId.equals(req.auth.sellerId)) {
+      return res.status(401).json({
+        error: "You are not authorized to update this book",
+      });
+    } else {
+      Books.updateOne({ _id: req.body.bookId }, req.body, (error, book) => {
+        if (error || !book) {
+          if (error) {
+            console.log("Error updating Book in /UpdateBook", error);
+          }
+          return res.status(400).json({
+            error: "Book does not exist",
+          });
+        }
+        return res.json({ msg: "Book updated" });
+      });
+    }
+  });
+};

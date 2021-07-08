@@ -9,6 +9,7 @@ const {
   deleteBook,
   getBookList,
   getBookDetails,
+  updateBook,
 } = require("../controllers/book");
 
 router.post(
@@ -31,11 +32,21 @@ router.post(
 );
 
 router.get("/getBookList", isSignedIn, isSeller, getBookList);
+
 router.get(
   "/getBookDetails",
   [check("bookId").notEmpty().withMessage("Book Id is required")],
   handleValidationError,
   getBookDetails
+);
+
+router.post(
+  "/updateBook",
+  isSignedIn,
+  isSeller,
+  [check("bookId").notEmpty().withMessage("Book Id is required")],
+  handleValidationError,
+  updateBook
 );
 
 router.delete(
