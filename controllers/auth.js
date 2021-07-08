@@ -1,4 +1,5 @@
 const Users = require("../models/users");
+const SellerProfiles = require("../models/sellerProfiles");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const sendEmailOtp = require("../email/sendEmailOtp");
@@ -140,16 +141,16 @@ exports.isAdmin = (req, res, next) => {
 };
 
 exports.isSeller = (req, res, next) => {
-  const query = Users.findOne({ _id: req.auth._id }).select({
-    _id: 0,
-    roles: 1,
+  const query = SellerProfiles.findOne({ userId: req.auth._id }).select({
+    _id: 1,
   });
-  query.exec((error, user) => {
-    if (error || !user || !user.roles.includes("seller")) {
+  query.exec((error, sellerProfile) => {
+    if (error || !sellerProfile) {
       return res.status(403).json({
-        error: "You are not seller",
+        error: "You are not a seller",
       });
     }
+    req.auth.sellerId = sellerProfile._id;
     next();
   });
 };
