@@ -9,6 +9,7 @@ const newsletterRoutes = require("./newsletter");
 const messageRoutes = require("./message");
 const websiteReviewRoutes = require("./websiteReview");
 const sellerRoutes = require("./seller");
+const bookRoutes = require("./book");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -19,6 +20,7 @@ router.use("/", newsletterRoutes);
 router.use("/", messageRoutes);
 router.use("/", websiteReviewRoutes);
 router.use("/", sellerRoutes);
+router.use("/", bookRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
