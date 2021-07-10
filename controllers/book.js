@@ -4,19 +4,36 @@ const SellerProfiles = require("../models/sellerProfiles");
 
 const isValidISBN = (isbn) => {
   let n = isbn.length;
-  if (n != 10) return false;
+  if (n == 10) {
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      let digit = isbn[i] - "0";
+      if (0 > digit || 9 < digit) return false;
+      sum += digit * (10 - i);
+    }
 
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    let digit = isbn[i] - "0";
-    if (0 > digit || 9 < digit) return false;
-    sum += digit * (10 - i);
+    let last = isbn[9];
+    if (last != "X" && (last < "0" || last > "9")) return false;
+    sum += last == "X" ? 10 : last - "0";
+    return sum % 11 == 0;
+  } else if (n == 13) {
+    let sum = 0,
+      f = 0;
+    for (let i = 0; i < 13; i++) {
+      let digit = isbn[i] - "0";
+      if (digit < 0 || digit > 9) {
+        return false;
+      }
+      if (f & 1) {
+        sum += 3 * digit;
+      } else {
+        sum += digit;
+      }
+      f = !f;
+    }
+    return sum % 10 == 0;
   }
-
-  let last = isbn[9];
-  if (last != "X" && (last < "0" || last > "9")) return false;
-  sum += last == "X" ? 10 : last - "0";
-  return sum % 11 == 0;
+  return false;
 };
 
 exports.addBook = (req, res) => {
