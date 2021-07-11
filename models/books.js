@@ -39,6 +39,10 @@ const bookSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    language: {
+      type: String,
+      required: true,
+    },
     embedVideo: {
       type: String,
     },

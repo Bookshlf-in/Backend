@@ -20,6 +20,7 @@ router.post(
     check("title").notEmpty().withMessage("Title is required"),
     check("MRP").notEmpty().withMessage("MRP is required"),
     check("price").notEmpty().withMessage("Price is required"),
+    check("language").notEmpty().withMessage("Language is required"),
     check("editionYear").notEmpty().withMessage("Edition Year is required"),
     check("author").notEmpty().withMessage("Author is required"),
     check("ISBN").notEmpty().withMessage("ISBN No. is required"),
