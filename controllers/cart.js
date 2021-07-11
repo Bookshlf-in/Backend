@@ -2,14 +2,11 @@ const Books = require("../models/books");
 const CartItems = require("../models/cartItems");
 const mongoose = require("mongoose");
 
-//TODO: add orderedQty, and Qty
 exports.getCartList = async (req, res) => {
   try {
-    const cartItems = await CartItems.find({ userId: req.auth._id })
-      .select({ _id: 0, bookId: 1, createdAt: 1 })
-      .exec();
+    const cartItems = await CartItems.find({ userId: req.auth._id }).exec();
     const cartList = await Promise.all(
-      cartItems.map(async ({ bookId, createdAt }) => {
+      cartItems.map(async ({ _id, bookId, createdAt, purchaseQty }) => {
         const book = await Books.findOne({ _id: bookId })
           .select({
             _id: 1,
@@ -19,11 +16,16 @@ exports.getCartList = async (req, res) => {
             editionYear: 1,
             author: 1,
             sellerName: 1,
+            qty: 1,
             photos: { $slice: 1 },
           })
           .exec();
-        book.createdAt = createdAt;
-        return book;
+        book._doc.bookId = book._doc._id;
+        delete book._doc._id;
+        book._doc.photo =
+          book._doc.photos.length > 0 ? book._doc.photos[0] : "";
+        delete book._doc.photos;
+        return { ...book._doc, _id, purchaseQty, createdAt };
       })
     );
     res.json(cartList);
@@ -87,4 +89,43 @@ exports.deleteCartItem = async (req, res) => {
   }
 };
 
-// change orderedQty route (purchaseQty)
+exports.changeCartItemPurchaseQty = async (req, res) => {
+  try {
+    const cartItemId = req.body.cartItemId;
+    const purchaseQty = req.body.purchaseQty;
+    const userId = req.auth._id;
+    if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
+      return res.status(400).json({ error: "Book does not exist" });
+    }
+    const cartItem = await CartItems.findOne({ _id: cartItemId }).exec();
+    if (!cartItem) {
+      return res.status(400).json({ error: "Book does not exist" });
+    } else if (!cartItem.userId.equals(userId)) {
+      return res
+        .status(400)
+        .json({ error: "You are not authorized to access this item" });
+    }
+    const book = await Books.findOne({ _id: cartItem.bookId })
+      .select({ _id: 0, qty: 1 })
+      .exec();
+    if (book.qty < purchaseQty) {
+      return res
+        .status(400)
+        .json({ error: `Quantity cannot exceed ${book.qty}` });
+    }
+    const updatedItem = await CartItems.updateOne(
+      { _id: cartItemId },
+      { purchaseQty }
+    ).exec();
+    if (updatedItem.nModified != 1) {
+      return res.status(500).json({ error: "Failed to update quantity" });
+    }
+    res.json({ msg: "Changed purchase quantity" });
+  } catch (error) {
+    console.log(
+      "Error occurred changing purchase quantity in /changeCartItemPurchaseQty",
+      error
+    );
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};

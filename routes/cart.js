@@ -8,6 +8,7 @@ const {
   getCartList,
   addCartItem,
   deleteCartItem,
+  changeCartItemPurchaseQty,
 } = require("../controllers/cart");
 
 router.get("/getCartList", isSignedIn, getCartList);
@@ -26,6 +27,21 @@ router.delete(
   [check("bookId").notEmpty().withMessage("Book Id is required")],
   handleValidationError,
   deleteCartItem
+);
+
+router.post(
+  "/changeCartItemPurchaseQty",
+  isSignedIn,
+  [
+    check("cartItemId").notEmpty().withMessage("Card Item Id is required"),
+    check("purchaseQty")
+      .notEmpty()
+      .withMessage("New quantity is required")
+      .isInt({ min: 1 })
+      .withMessage("Only positive numeric value acceptable"),
+  ],
+  handleValidationError,
+  changeCartItemPurchaseQty
 );
 
 module.exports = router;

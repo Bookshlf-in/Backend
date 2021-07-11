@@ -10,6 +10,10 @@ const cartItemSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    purchaseQty: {
+      type: Number,
+      default: 1,
+    },
   },
   { timestamps: true }
 );
