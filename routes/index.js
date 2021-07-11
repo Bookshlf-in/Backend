@@ -10,6 +10,7 @@ const messageRoutes = require("./message");
 const websiteReviewRoutes = require("./websiteReview");
 const sellerRoutes = require("./seller");
 const bookRoutes = require("./book");
+const searchRoutes = require("./search");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -21,6 +22,7 @@ router.use("/", messageRoutes);
 router.use("/", websiteReviewRoutes);
 router.use("/", sellerRoutes);
 router.use("/", bookRoutes);
+router.use("/", searchRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
