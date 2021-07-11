@@ -11,6 +11,7 @@ const websiteReviewRoutes = require("./websiteReview");
 const sellerRoutes = require("./seller");
 const bookRoutes = require("./book");
 const searchRoutes = require("./search");
+const cartRoutes = require("./cart");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -23,6 +24,7 @@ router.use("/", websiteReviewRoutes);
 router.use("/", sellerRoutes);
 router.use("/", bookRoutes);
 router.use("/", searchRoutes);
+router.use("/", cartRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
