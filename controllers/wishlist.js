@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 
 exports.getWishlist = async (req, res) => {
   try {
-    const wishlistItems = await WishlistItems.find({ userId: req.auth._id })
-      .select({ _id: 0, bookId: 1, createdAt: 1 })
-      .exec();
+    const wishlistItems = await WishlistItems.find({
+      userId: req.auth._id,
+    }).exec();
     const wishList = await Promise.all(
-      wishlistItems.map(async ({ bookId, createdAt }) => {
+      wishlistItems.map(async ({ _id, bookId, createdAt }) => {
         const book = await Books.findOne({ _id: bookId })
           .select({
             _id: 1,
@@ -21,8 +21,12 @@ exports.getWishlist = async (req, res) => {
             photos: { $slice: 1 },
           })
           .exec();
-        book.createdAt = createdAt;
-        return book;
+        book._doc.bookId = book._doc._id;
+        delete book._doc._id;
+        book._doc.photo =
+          book._doc.photos.length > 0 ? book._doc.photos[0] : "";
+        delete book._doc.photos;
+        return { ...book._doc, _id, createdAt };
       })
     );
     res.json(wishList);
