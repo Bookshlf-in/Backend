@@ -6,11 +6,11 @@ const mongoose = require("mongoose");
 exports.getCartList = async (req, res) => {
   try {
     const cartItems = await CartItems.find({ userId: req.auth._id })
-      .select({ _id: 0, bookId: 1 })
+      .select({ _id: 0, bookId: 1, createdAt: 1 })
       .exec();
     const cartList = await Promise.all(
-      cartItems.map(async ({ bookId }) => {
-        const books = await Books.findOne({ _id: bookId })
+      cartItems.map(async ({ bookId, createdAt }) => {
+        const book = await Books.findOne({ _id: bookId })
           .select({
             _id: 1,
             title: 1,
@@ -18,12 +18,12 @@ exports.getCartList = async (req, res) => {
             price: 1,
             editionYear: 1,
             author: 1,
-            updatedAt: 1,
             sellerName: 1,
             photos: { $slice: 1 },
           })
           .exec();
-        return books;
+        book.createdAt = createdAt;
+        return book;
       })
     );
     res.json(cartList);
@@ -87,4 +87,4 @@ exports.deleteCartItem = async (req, res) => {
   }
 };
 
-// change orderedQty route
+// change orderedQty route (purchaseQty)
