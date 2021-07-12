@@ -3,7 +3,7 @@ const router = express.Router();
 const { check } = require("express-validator");
 
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isSeller } = require("../controllers/auth");
+const { isSignedIn, isSeller, getAuth } = require("../controllers/auth");
 const {
   addBook,
   deleteBook,
@@ -36,6 +36,7 @@ router.get("/getBookList", isSignedIn, isSeller, getBookList);
 
 router.get(
   "/getBookDetails",
+  getAuth,
   [check("bookId").notEmpty().withMessage("Book Id is required")],
   handleValidationError,
   getBookDetails

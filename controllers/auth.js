@@ -114,6 +114,23 @@ exports.isSignedIn = expressJwt({
   },
 });
 
+exports.getAuth = expressJwt({
+  secret: process.env.JWT_SECRET,
+  credentialsRequired: false,
+  algorithms: ["HS256"],
+  userProperty: "auth",
+  getToken: (req) => {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.split(" ")[0] === "Bearer"
+    ) {
+      return req.headers.authorization.split(" ")[1];
+    } else if (req.cookies.token) {
+      req.cookies.token;
+    }
+  },
+});
+
 // Custom middlewares
 exports.isAuthenticated = (req, res, next) => {
   let checker = req.profile && req.auth && req.profile._id === req.auth._id;

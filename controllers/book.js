@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Books = require("../models/books");
 const SellerProfiles = require("../models/sellerProfiles");
+const CartItems = require("../models/cartItems");
+const WishlistItems = require("../models/wishlistItems");
 
 const isValidISBN = (isbn) => {
   let n = isbn.length;
@@ -75,21 +77,74 @@ exports.addBook = (req, res) => {
   });
 };
 
-exports.getBookDetails = (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.query.bookId)) {
-    return res.status(400).json({ error: "Book does not exist" });
-  }
-  Books.findOne({ _id: req.query.bookId }, (error, book) => {
-    if (error || !book) {
-      if (error) {
-        console.log("Error finding book in /getBookDetails", error);
-      }
+exports.getBookDetails = async (req, res) => {
+  try {
+    const userId = req.auth?._id;
+    if (!mongoose.Types.ObjectId.isValid(req.query.bookId)) {
+      return res.status(400).json({ error: "Book does not exist" });
+    }
+    const book = (
+      await Books.findOne({ _id: req.query.bookId })
+        .select({
+          _id: 1,
+          title: 1,
+          description: 1,
+          photos: 1,
+          tags: 1,
+          qty: 1,
+          status: 1,
+          MRP: 1,
+          price: 1,
+          editionYear: 1,
+          author: 1,
+          ISBN: 1,
+          embedVideo: 1,
+          sellerId: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        })
+        .exec()
+    )?._doc;
+    if (!book) {
       return res.status(400).json({
         error: "Book does not exists",
       });
     }
-    return res.json(book);
-  });
+    const seller = (
+      await SellerProfiles.findOne({ _id: book.sellerId }).select({
+        _id: 1,
+        name: 1,
+        rating: 1,
+        noOfRatings: 1,
+        noOfReiews: 1,
+        isVerified: 1,
+        createdAt: 1,
+      })
+    )?._doc;
+    if (!seller) {
+      return res.status(500).json({ error: "Seller does not exist" });
+    }
+    delete book.sellerId;
+    book.seller = seller;
+    book.wishlist = false;
+    book.cart = false;
+    if (userId) {
+      const wishlistItem = await WishlistItems.findOne({
+        userId,
+        bookId: book._id,
+      }).select({ _id: 1 });
+      if (wishlistItem) book.wishlist = true;
+      const cartItem = await CartItems.findOne({
+        userId,
+        bookId: book._id,
+      }).select({ _id: 1 });
+      if (cartItem) book.cart = true;
+    }
+    res.json(book);
+  } catch (error) {
+    console.log("Error finding book in /getBookDetails", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
 };
 
 exports.getBookList = (req, res) => {
