@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Users = require("../models/users");
 const Books = require("../models/books");
 const Addresses = require("../models/addresses");
 const Orders = require("../models/orders");
@@ -73,6 +74,9 @@ exports.purchaseBook = async (req, res) => {
       });
     }
     if (errors.length > 0) return res.status(400).json({ errors });
+    const customerName = (
+      await Users.findOne({ _id: req.auth._id }).select({ name: 1 }).exec()
+    )?.name;
     const sellerAddress = (
       await Addresses.findOne({
         _id: book.pickupAddressId,
@@ -94,7 +98,8 @@ exports.purchaseBook = async (req, res) => {
     book.photo = book.photos.length > 0 ? book.photos[0] : "";
     delete book.photos;
     const order = new Orders({
-      userId: req.auth._id,
+      customerName,
+      customerId: req.auth._id,
       ...book,
       purchaseQty,
       sellerAddress,
