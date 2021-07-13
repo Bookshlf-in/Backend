@@ -13,6 +13,7 @@ const bookRoutes = require("./book");
 const searchRoutes = require("./search");
 const cartRoutes = require("./cart");
 const wishlistRoutes = require("./wishlist");
+const orderRoutes = require("./order");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -27,6 +28,7 @@ router.use("/", bookRoutes);
 router.use("/", searchRoutes);
 router.use("/", cartRoutes);
 router.use("/", wishlistRoutes);
+router.use("/", orderRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
