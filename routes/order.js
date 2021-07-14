@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { purchaseBook } = require("../controllers/order");
+const { purchaseBook, purchaseCart } = require("../controllers/order");
 const { isSignedIn } = require("../controllers/auth");
 const { handleValidationError } = require("../functions/validator");
 
@@ -22,6 +22,18 @@ router.post(
   ],
   handleValidationError,
   purchaseBook
+);
+
+router.post(
+  "/purchaseCart",
+  isSignedIn,
+  [
+    check("customerAddressId")
+      .notEmpty()
+      .withMessage("Customer Address is required"),
+  ],
+  handleValidationError,
+  purchaseCart
 );
 
 module.exports = router;
