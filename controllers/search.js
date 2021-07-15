@@ -27,7 +27,7 @@ exports.search = async (req, res) => {
     const data = await Promise.all(
       books.map(async (book) => {
         book = book._doc;
-        book.photo = book.photos.length > 0 ? book.photos[0] : "";
+        book.photo = book.photos?.length > 0 ? book.photos[0] : "";
         delete book.photos;
         const seller = (
           await SellerProfiles.findOne({ _id: book.sellerId }).select({
