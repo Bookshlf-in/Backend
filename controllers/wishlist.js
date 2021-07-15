@@ -24,7 +24,7 @@ exports.getWishlist = async (req, res) => {
         book._doc.bookId = book._doc._id;
         delete book._doc._id;
         book._doc.photo =
-          book._doc.photos.length > 0 ? book._doc.photos[0] : "";
+          book._doc.photos?.length > 0 ? book._doc.photos[0] : "";
         delete book._doc.photos;
         return { ...book._doc, _id, createdAt };
       })
