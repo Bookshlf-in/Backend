@@ -42,6 +42,7 @@ exports.addCartItem = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(bookId)) {
       return res.status(400).json({ error: "Book does not exist" });
     }
+    //TODO: isAvailable: true
     const book = await Books.findOne({ _id: bookId }).select({ _id: 1 }).exec();
     if (!book) return res.status(400).json({ error: "Book does not exist" });
 

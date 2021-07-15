@@ -68,7 +68,7 @@ exports.purchaseBook = async (req, res) => {
         });
       }
     }
-    if (purchaseQty > book.qty) {
+    if (book && purchaseQty > book.qty) {
       errors.push({
         error: "Purchase qty cannot be greater than stock",
         param: "purchaseQty",
@@ -112,16 +112,28 @@ exports.purchaseBook = async (req, res) => {
       if (error) {
         throw error;
       }
-      Books.updateOne(
-        { _id: order.bookId },
-        { qty: book.qty - order.purchaseQty }
-      ).exec((error, updatedBook) => {
-        if (error) {
-          Orders.deleteOne({ _id: order._id });
-          throw error;
+      const newQty = book.qty - order.purchaseQty;
+      let updateObj = {};
+      if (newQty <= 0) {
+        updateObj = {
+          qty: newQty,
+          isAvailable: false,
+          status: "Sold",
+        };
+      } else {
+        updateObj = {
+          qty: newQty,
+        };
+      }
+      Books.updateOne({ _id: order.bookId }, updateObj).exec(
+        (error, updatedBook) => {
+          if (error) {
+            Orders.deleteOne({ _id: order._id });
+            throw error;
+          }
+          res.json({ msg: "Order placed" });
         }
-        res.json({ msg: "Order placed" });
-      });
+      );
     });
   } catch (error) {
     console.log("Error occurred in purchase book: ", error);
@@ -181,7 +193,8 @@ exports.purchaseCart = async (req, res) => {
     if (cartItems.length == 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
-    await Promise.all(
+    let error = "";
+    const orderObj = await Promise.all(
       cartItems.map(async ({ bookId, purchaseQty }) => {
         const book = (
           await Books.findOne({ _id: bookId })
@@ -200,6 +213,9 @@ exports.purchaseCart = async (req, res) => {
             })
             .exec()
         )?._doc;
+        if (book.qty <= 0) error = "Book not available";
+        else if (book.qty < purchaseQty)
+          error = "Purchase qty cannot be greater than stock";
         const sellerAddress = (
           await Addresses.findOne({
             _id: book.pickupAddressId,
@@ -220,22 +236,41 @@ exports.purchaseCart = async (req, res) => {
         delete book._id;
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
-        newObj = { ...obj, ...book, purchaseQty, sellerAddress };
-        const order = new Orders(newObj);
+        const newObj = { ...obj, ...book, purchaseQty, sellerAddress };
+        return newObj;
+      })
+    );
+    if (error != "") return res.status(400).json({ error });
+    await Promise.all(
+      orderObj.map(async (obj) => {
+        const order = new Orders(obj);
         await order.save((error, order) => {
           if (error) {
             throw error;
           }
-          Books.updateOne(
-            { _id: order.bookId },
-            { qty: book.qty - order.purchaseQty }
-          ).exec((error, updatedBook) => {
-            if (error) {
-              Orders.deleteOne({ _id: order._id });
-              throw error;
+          const newQty = obj.qty - order.purchaseQty;
+          let updateObj = {};
+          if (newQty <= 0) {
+            updateObj = {
+              qty: newQty,
+              isAvailable: false,
+              status: "Sold",
+            };
+          } else {
+            updateObj = {
+              qty: newQty,
+            };
+          }
+          Books.updateOne({ _id: order.bookId }, updateObj).exec(
+            (error, updatedBook) => {
+              if (error) {
+                Orders.deleteOne({ _id: order._id });
+                throw error;
+              }
             }
-          });
+          );
         });
+        return order;
       })
     );
     await CartItems.deleteMany({ userId: req.auth._id });
