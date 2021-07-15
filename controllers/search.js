@@ -22,6 +22,7 @@ exports.search = async (req, res) => {
         sellerName: 1,
         sellerId: 1,
         photos: { $slice: 1 },
+        language: 1,
       })
       .exec();
     const data = await Promise.all(
