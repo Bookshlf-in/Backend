@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { purchaseBook, purchaseCart } = require("../controllers/order");
+const {
+  purchaseBook,
+  purchaseCart,
+  cancelOrder,
+} = require("../controllers/order");
 const { isSignedIn } = require("../controllers/auth");
 const { handleValidationError } = require("../functions/validator");
 
@@ -34,6 +38,14 @@ router.post(
   ],
   handleValidationError,
   purchaseCart
+);
+
+router.delete(
+  "/cancelOrder",
+  isSignedIn,
+  [check("orderId").notEmpty().withMessage("Order Id required")],
+  handleValidationError,
+  cancelOrder
 );
 
 module.exports = router;

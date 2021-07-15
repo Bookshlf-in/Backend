@@ -4,6 +4,7 @@ const Books = require("../models/books");
 const Addresses = require("../models/addresses");
 const Orders = require("../models/orders");
 const CartItems = require("../models/cartItems");
+const { update } = require("../models/users");
 
 exports.purchaseBook = async (req, res) => {
   try {
@@ -277,6 +278,41 @@ exports.purchaseCart = async (req, res) => {
     res.json({ msg: "Order placed" });
   } catch (error) {
     console.log("Error occurred in purchase cart: ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.body.orderId;
+    if (!mongoose.isValidObjectId(orderId))
+      return res.status(400).json({ error: "Order not found" });
+    const order = await Orders.findOne({ _id: orderId }).select({
+      _id: 1,
+      progress: 1,
+      status: { $slice: -1 },
+      customerId: 1,
+    });
+    if (!order) {
+      return res.status(400).json({ error: "Order not found" });
+    } else if (!order.customerId.equals(req.auth._id)) {
+      return res
+        .status(400)
+        .json({ error: "You are not authorized to cancel this order" });
+    } else if (order.status[0] == "Delivered") {
+      return res.status(400).json({ error: "Book already delivered" });
+    } else if (order.status[0] == "Cancelled") {
+      return res.status(400).json({ error: "Order already cacelled" });
+    }
+    const updatedOrder = await Orders.updateOne(
+      { _id: orderId },
+      { progress: 100, $push: { status: "Cancelled" } }
+    ).exec();
+    if (updatedOrder.nModified != 1)
+      return res.json({ error: "Some error occurred" });
+    res.json({ msg: "Order cancelled" });
+  } catch (error) {
+    console.log("Error occurred in cancelOrder: ", error);
     res.status(500).json({ error: "Some error occurred" });
   }
 };
