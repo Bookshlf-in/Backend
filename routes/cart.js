@@ -9,6 +9,7 @@ const {
   addCartItem,
   deleteCartItem,
   changeCartItemPurchaseQty,
+  countCartItems,
 } = require("../controllers/cart");
 
 router.get("/getCartList", isSignedIn, getCartList);
@@ -43,5 +44,7 @@ router.post(
   handleValidationError,
   changeCartItemPurchaseQty
 );
+
+router.get("/countCartItems", isSignedIn, countCartItems);
 
 module.exports = router;
