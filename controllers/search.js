@@ -6,9 +6,7 @@ const WishlistItems = require("../models/wishlistItems");
 exports.search = async (req, res) => {
   try {
     const userId = req.auth?._id;
-    console.log(userId);
-    //TODO: { isAvailable: true }
-    const books = await Books.find()
+    const books = await Books.find({ isAvailable: true })
       .sort({ updatedAt: -1 })
       .limit(50)
       .select({
