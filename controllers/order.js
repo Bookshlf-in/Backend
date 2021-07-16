@@ -4,7 +4,72 @@ const Books = require("../models/books");
 const Addresses = require("../models/addresses");
 const Orders = require("../models/orders");
 const CartItems = require("../models/cartItems");
-const { update } = require("../models/users");
+
+exports.getOrderList = async (req, res) => {
+  try {
+    const customerId = req.auth._id;
+    const orderList = await Orders.find({ customerId })
+      .select({
+        _id: 1,
+        photo: 1,
+        title: 1,
+        price: 1,
+        status: 1,
+        purchaseQty: 1,
+        bookId: 1,
+        sellerName: 1,
+        author: 1,
+      })
+      .exec();
+    res.json(orderList);
+  } catch (error) {
+    console.log("Error occurred in /getOrderList", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
+
+exports.getOrderDetails = async (req, res) => {
+  const orderId = req.query.orderId;
+  if (!mongoose.isValidObjectId(orderId)) {
+    res
+      .status(400)
+      .json({ errors: [{ error: "Order not found", param: "orderId" }] });
+  }
+  const order = await Orders.findOne({ _id: orderId })
+    .select({
+      _id: 1,
+      status: 1,
+      paymentMode: 1,
+      paymentStatus: 1,
+      shippingCharges: 1,
+      progress: 1,
+      customerName: 1,
+      customerId: 1,
+      title: 1,
+      MRP: 1,
+      price: 1,
+      author: 1,
+      sellerId: 1,
+      sellerName: 1,
+      bookId: 1,
+      photo: 1,
+      purchaseQty: 1,
+      customerAddress: 1,
+      expectedDeliveryDate: 1,
+      createdAt: 1,
+      updatedAt: 1,
+    })
+    .exec();
+  if (!order.customerId.equals(req.auth._id)) {
+    return res.status(400).json({
+      errors: {
+        error: "You are not authorized to see other user's orders",
+        param: "orderId",
+      },
+    });
+  }
+  res.json(order);
+};
 
 exports.purchaseBook = async (req, res) => {
   try {

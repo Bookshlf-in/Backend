@@ -6,9 +6,21 @@ const {
   purchaseBook,
   purchaseCart,
   cancelOrder,
+  getOrderList,
+  getOrderDetails,
 } = require("../controllers/order");
 const { isSignedIn } = require("../controllers/auth");
 const { handleValidationError } = require("../functions/validator");
+
+router.get("/getOrderList", isSignedIn, getOrderList);
+
+router.get(
+  "/getOrderDetails",
+  isSignedIn,
+  [check("orderId").notEmpty().withMessage("Order Id is required")],
+  handleValidationError,
+  getOrderDetails
+);
 
 router.post(
   "/purchaseBook",
