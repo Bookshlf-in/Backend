@@ -29,46 +29,51 @@ exports.getOrderList = async (req, res) => {
 };
 
 exports.getOrderDetails = async (req, res) => {
-  const orderId = req.query.orderId;
-  if (!mongoose.isValidObjectId(orderId)) {
-    res
-      .status(400)
-      .json({ errors: [{ error: "Order not found", param: "orderId" }] });
+  try {
+    const orderId = req.query.orderId;
+    if (!mongoose.isValidObjectId(orderId)) {
+      res
+        .status(400)
+        .json({ errors: [{ error: "Order not found", param: "orderId" }] });
+    }
+    const order = await Orders.findOne({ _id: orderId })
+      .select({
+        _id: 1,
+        status: 1,
+        paymentMode: 1,
+        paymentStatus: 1,
+        shippingCharges: 1,
+        progress: 1,
+        customerName: 1,
+        customerId: 1,
+        title: 1,
+        MRP: 1,
+        price: 1,
+        author: 1,
+        sellerId: 1,
+        sellerName: 1,
+        bookId: 1,
+        photo: 1,
+        purchaseQty: 1,
+        customerAddress: 1,
+        expectedDeliveryDate: 1,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      .exec();
+    if (!order.customerId.equals(req.auth._id)) {
+      return res.status(400).json({
+        errors: {
+          error: "You are not authorized to see other user's orders",
+          param: "orderId",
+        },
+      });
+    }
+    res.json(order);
+  } catch (error) {
+    console.log("Error occurred in /getOrderDetails", error);
+    res.status(500).json({ error: "Some error occurred" });
   }
-  const order = await Orders.findOne({ _id: orderId })
-    .select({
-      _id: 1,
-      status: 1,
-      paymentMode: 1,
-      paymentStatus: 1,
-      shippingCharges: 1,
-      progress: 1,
-      customerName: 1,
-      customerId: 1,
-      title: 1,
-      MRP: 1,
-      price: 1,
-      author: 1,
-      sellerId: 1,
-      sellerName: 1,
-      bookId: 1,
-      photo: 1,
-      purchaseQty: 1,
-      customerAddress: 1,
-      expectedDeliveryDate: 1,
-      createdAt: 1,
-      updatedAt: 1,
-    })
-    .exec();
-  if (!order.customerId.equals(req.auth._id)) {
-    return res.status(400).json({
-      errors: {
-        error: "You are not authorized to see other user's orders",
-        param: "orderId",
-      },
-    });
-  }
-  res.json(order);
 };
 
 exports.purchaseBook = async (req, res) => {
