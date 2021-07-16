@@ -91,3 +91,14 @@ exports.deleteWishlistItem = async (req, res) => {
     res.status(500).json({ error: "Some error occurred" });
   }
 };
+
+exports.countWishlistItems = async (req, res) => {
+  try {
+    const userId = req.auth._id;
+    const count = await WishlistItems.count({ userId });
+    res.json({ count });
+  } catch (error) {
+    console.log("Error occurred in countWishlistItems", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};

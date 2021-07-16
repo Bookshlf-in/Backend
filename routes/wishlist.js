@@ -8,6 +8,7 @@ const {
   getWishlist,
   addWishlistItem,
   deleteWishlistItem,
+  countWishlistItems,
 } = require("../controllers/wishlist");
 
 router.get("/getWishlist", isSignedIn, getWishlist);
@@ -27,5 +28,7 @@ router.delete(
   handleValidationError,
   deleteWishlistItem
 );
+
+router.get("/countWishlistItems", isSignedIn, countWishlistItems);
 
 module.exports = router;
