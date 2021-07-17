@@ -70,8 +70,8 @@ exports.checkoutCart = async (req, res) => {
         delete book._id;
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
-        itemsSubtotal += book.price * book.qty;
-        totalItems += book.qty;
+        itemsSubtotal += book.price * purchaseQty;
+        totalItems += purchaseQty;
         const obj = { ...book, _id, purchaseQty, createdAt };
         if (book.qty <= 0) {
           obj.error = "Boook sold out";
