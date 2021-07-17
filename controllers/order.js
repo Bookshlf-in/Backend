@@ -19,6 +19,7 @@ exports.getOrderList = async (req, res) => {
         bookId: 1,
         sellerName: 1,
         author: 1,
+        orderTotal: 1,
       })
       .exec();
     res.json(orderList);
