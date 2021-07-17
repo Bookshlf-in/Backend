@@ -64,7 +64,7 @@ const orderSchema = mongoose.Schema(
     },
     shippingCharges: {
       type: Number,
-      default: 40,
+      required: true,
     },
     sellerId: {
       type: mongoose.Types.ObjectId,
@@ -77,6 +77,10 @@ const orderSchema = mongoose.Schema(
     progress: {
       type: Number,
       default: 0,
+    },
+    orderTotal: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true }

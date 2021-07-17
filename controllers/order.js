@@ -169,6 +169,8 @@ exports.purchaseBook = async (req, res) => {
     delete book._id;
     book.photo = book.photos.length > 0 ? book.photos[0] : "";
     delete book.photos;
+    const shippingCharges = 40;
+    const orderTotal = purchaseQty * book.price + shippingCharges;
     const order = new Orders({
       customerName,
       customerId: req.auth._id,
@@ -176,6 +178,8 @@ exports.purchaseBook = async (req, res) => {
       purchaseQty,
       sellerAddress,
       customerAddress,
+      shippingCharges,
+      orderTotal,
       status: ["Order placed"],
       expectedDeliveryDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
     });
@@ -307,7 +311,16 @@ exports.purchaseCart = async (req, res) => {
         delete book._id;
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
-        const newObj = { ...obj, ...book, purchaseQty, sellerAddress };
+        const shippingCharges = 40;
+        const orderTotal = purchaseQty * book.price + shippingCharges;
+        const newObj = {
+          ...obj,
+          ...book,
+          purchaseQty,
+          sellerAddress,
+          shippingCharges,
+          orderTotal,
+        };
         return newObj;
       })
     );

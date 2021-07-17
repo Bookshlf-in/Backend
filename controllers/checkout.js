@@ -81,7 +81,6 @@ exports.checkoutCart = async (req, res) => {
         return obj;
       })
     );
-    // const totalItems = cartList.length;
     const shippingCharges = cartList.length * 40;
     const orderTotal = itemsSubtotal + shippingCharges;
     const obj = {
