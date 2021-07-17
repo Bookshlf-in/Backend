@@ -60,6 +60,7 @@ exports.getOrderDetails = async (req, res) => {
         expectedDeliveryDate: 1,
         createdAt: 1,
         updatedAt: 1,
+        orderTotal: 1,
       })
       .exec();
     if (!order.customerId.equals(req.auth._id)) {
