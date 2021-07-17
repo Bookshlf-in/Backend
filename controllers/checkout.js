@@ -28,7 +28,7 @@ exports.checkoutBook = async (req, res) => {
     delete book._doc._id;
     book._doc.photo = book._doc.photos.length > 0 ? book._doc.photos[0] : "";
     delete book._doc.photos;
-    const shippingCharges = 40 * purchaseQty;
+    const shippingCharges = 40;
     const itemsSubtotal = book.price * purchaseQty;
     const orderTotal = shippingCharges + itemsSubtotal;
     res.json({
@@ -48,6 +48,7 @@ exports.checkoutCart = async (req, res) => {
   try {
     const cartItems = await CartItems.find({ userId: req.auth._id }).exec();
     let itemsSubtotal = 0;
+    let totalItems = 0;
     const cartList = await Promise.all(
       cartItems.map(async ({ _id, bookId, createdAt, purchaseQty }) => {
         const book = (
@@ -69,7 +70,8 @@ exports.checkoutCart = async (req, res) => {
         delete book._id;
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
-        itemsSubtotal += book.price;
+        itemsSubtotal += book.price * book.qty;
+        totalItems += book.qty;
         const obj = { ...book, _id, purchaseQty, createdAt };
         if (book.qty <= 0) {
           obj.error = "Boook sold out";
@@ -79,8 +81,8 @@ exports.checkoutCart = async (req, res) => {
         return obj;
       })
     );
-    const totalItems = cartList.length;
-    const shippingCharges = totalItems * 40;
+    // const totalItems = cartList.length;
+    const shippingCharges = cartList.length * 40;
     const orderTotal = itemsSubtotal + shippingCharges;
     const obj = {
       items: cartList,
