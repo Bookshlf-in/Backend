@@ -88,6 +88,26 @@ exports.getSellerReviews = async (req, res) => {
         ],
       });
     }
+    const sellerProfile = (
+      await SellerProfiles.findOne({ _id: sellerId })
+        .select({
+          _id: 0,
+          rating: 1,
+          noOfRatings: 1,
+          noOfReviews: 1,
+        })
+        .exec()
+    )?._doc;
+    if (!sellerProfile) {
+      return res.status(400).json({
+        errors: [
+          {
+            error: "Seller does not exists",
+            param: "sellerId",
+          },
+        ],
+      });
+    }
     const noOfReviews = await Reviews.countDocuments({ sellerId });
     const reviews = await Reviews.find({ sellerId })
       .sort({ updatedAt: -1 })
@@ -101,7 +121,7 @@ exports.getSellerReviews = async (req, res) => {
       })
       .exec();
     const totalPages = Math.ceil(noOfReviews / 10);
-    res.json({ totalPages, data: reviews });
+    res.json({ ...sellerProfile, totalPages, data: reviews });
   } catch (error) {
     console.log("Error occurred at /getSellerReviews ", error);
     res.status(500).json({ error: "Some error occurred" });
