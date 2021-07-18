@@ -141,7 +141,7 @@ exports.changeCartItemPurchaseQty = async (req, res) => {
 exports.countCartItems = async (req, res) => {
   try {
     const userId = req.auth._id;
-    const count = await CartItems.count({ userId });
+    const count = await CartItems.countDocuments({ userId });
     res.json({ count });
   } catch (error) {
     console.log("Error occurred in countCartItems", error);
