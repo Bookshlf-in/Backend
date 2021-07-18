@@ -71,7 +71,12 @@ exports.updateSellerProfile = (req, res) => {
 
 exports.getSellerReviews = async (req, res) => {
   try {
-    const page = req.query?.page ? req.query.page : 2;
+    const page = req.query?.page ? req.query.page : 1;
+    if (page <= 0) {
+      return res.status(400).json({
+        errors: { error: "page value should be positive", param: "page" },
+      });
+    }
     const sellerId = req.query?.sellerId || req.auth?.sellerId;
     if (!mongoose.isValidObjectId(sellerId)) {
       return res.status(400).json({
@@ -83,7 +88,7 @@ exports.getSellerReviews = async (req, res) => {
         ],
       });
     }
-    const noOfReviews = await Reviews.count({ sellerId });
+    const noOfReviews = await Reviews.countDocuments({ sellerId });
     const reviews = await Reviews.find({ sellerId })
       .sort({ updatedAt: -1 })
       .skip((page - 1) * 10)

@@ -174,7 +174,6 @@ exports.isSeller = (req, res, next) => {
 
 exports.getSellerAuth = async (req, res, next) => {
   if (!req.auth?._id) {
-    console.log("Hola");
     next();
   } else {
     try {
