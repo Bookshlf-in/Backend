@@ -113,7 +113,7 @@ exports.purchaseBook = async (req, res) => {
       )?._doc;
       if (!book) {
         errors.push({
-          error: "Book does not exist",
+          error: "Book not available",
           param: "bookId",
         });
       }
@@ -279,8 +279,9 @@ exports.purchaseCart = async (req, res) => {
     let error = "";
     const orderObj = await Promise.all(
       cartItems.map(async ({ bookId, purchaseQty }) => {
+        if (error !== "") return {};
         const book = (
-          await Books.findOne({ _id: bookId })
+          await Books.findOne({ _id: bookId, isAvailable: true })
             .select({
               _id: 1,
               title: 1,
@@ -296,9 +297,14 @@ exports.purchaseCart = async (req, res) => {
             })
             .exec()
         )?._doc;
-        if (book.qty <= 0) error = "Book not available";
-        else if (book.qty < purchaseQty)
-          error = "Purchase qty cannot be greater than stock";
+        if (!book || book.qty <= 0) {
+          error = `Book not available (${bookId})`;
+          return {};
+        }
+        if (book.qty < purchaseQty) {
+          error = `Purchase qty cannot be greater than stock (${bookId})`;
+          return {};
+        }
         const sellerAddress = (
           await Addresses.findOne({
             _id: book.pickupAddressId,
