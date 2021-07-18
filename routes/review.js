@@ -4,11 +4,20 @@ const { check } = require("express-validator");
 
 const { handleValidationError } = require("../functions/validator");
 const {
+  getReview,
   addReview,
   updateReview,
   deleteReview,
 } = require("../controllers/review");
 const { isSignedIn } = require("../controllers/auth");
+
+router.get(
+  "/getReview",
+  isSignedIn,
+  [check("orderId").notEmpty().withMessage("Order Id required")],
+  handleValidationError,
+  getReview
+);
 
 router.post(
   "/addReview",

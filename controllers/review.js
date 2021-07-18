@@ -3,6 +3,25 @@ const Orders = require("../models/orders");
 const Reviews = require("../models/reviews");
 const SellerProfiles = require("../models/sellerProfiles");
 
+exports.getReview = async (req, res) => {
+  try {
+    const orderId = req.query?.orderId;
+    if (!mongoose.isValidObjectId(orderId)) {
+      return res
+        .status(400)
+        .json({ errors: { error: "Order does not exist", param: "orderId" } });
+    }
+    const review = await Reviews.findOne({
+      customerId: req.auth._id,
+      orderId,
+    }).select({ rating: 1, review: 1 });
+    res.json(review);
+  } catch (error) {
+    console.log("Error occurred at /getReview ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
+
 exports.addReview = async (req, res) => {
   try {
     const { orderId } = req.body;
