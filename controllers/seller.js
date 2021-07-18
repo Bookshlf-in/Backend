@@ -1,6 +1,7 @@
+const mongoose = require("mongoose");
 const Users = require("../models/users");
 const SellerProfiles = require("../models/sellerProfiles");
-const mongoose = require("mongoose");
+const Reviews = require("../models/reviews");
 
 exports.sellerRegister = async (req, res) => {
   try {
@@ -66,4 +67,38 @@ exports.updateSellerProfile = (req, res) => {
     }
     res.json({ msg: "Profile updated" });
   });
+};
+
+exports.getSellerReviews = async (req, res) => {
+  try {
+    const page = req.query?.page ? req.query.page : 2;
+    const sellerId = req.query?.sellerId || req.auth?.sellerId;
+    if (!mongoose.isValidObjectId(sellerId)) {
+      return res.status(400).json({
+        errors: [
+          {
+            error: "Invalid seller Id",
+            param: "sellerId",
+          },
+        ],
+      });
+    }
+    const noOfReviews = await Reviews.count({ sellerId });
+    const reviews = await Reviews.find({ sellerId })
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * 10)
+      .limit(10)
+      .select({
+        customerName: 1,
+        rating: 1,
+        review: 1,
+        updatedAt: 1,
+      })
+      .exec();
+    const totalPages = Math.ceil(noOfReviews / 10);
+    res.json({ totalPages, data: reviews });
+  } catch (error) {
+    console.log("Error occurred at /getSellerReviews ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
 };

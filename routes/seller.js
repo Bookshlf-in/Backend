@@ -11,6 +11,7 @@ const {
   sellerRegister,
   getSellerProfile,
   updateSellerProfile,
+  getSellerReviews,
 } = require("../controllers/seller");
 
 router.post("/sellerRegister", isSignedIn, sellerRegister);
@@ -18,5 +19,7 @@ router.post("/sellerRegister", isSignedIn, sellerRegister);
 router.get("/getSellerProfile", getAuth, getSellerAuth, getSellerProfile);
 
 router.post("/updateSellerProfile", isSignedIn, isSeller, updateSellerProfile);
+
+router.get("/getSellerReviews", getAuth, getSellerAuth, getSellerReviews);
 
 module.exports = router;
