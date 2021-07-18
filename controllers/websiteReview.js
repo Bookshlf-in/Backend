@@ -22,9 +22,13 @@ exports.getWebsiteReview = (req, res) => {
 
 exports.updateWebsiteReview = (req, res) => {
   const obj = { ...req.body, userId: req.auth._id };
-  if (obj?.rating != undefined && obj?.rating > 5) {
+  if (obj?.rating && obj.rating > 5) {
     return res.status(400).json({
       error: "Rating cannot be greater than 5",
+    });
+  } else if (obj?.rating && obj.rating < 1) {
+    return res.status(400).json({
+      error: "Rating cannot be smaller than 1",
     });
   }
 
@@ -74,4 +78,21 @@ exports.deleteWebsiteReview = (req, res) => {
       return res.json({ msg: "Review deleted" });
     }
   });
+};
+
+exports.getTopWebsiteReviews = (req, res) => {
+  WebsiteReviews.find({ review: { $nin: [undefined, ""] } })
+    .sort({ rating: -1 })
+    .limit(10)
+    .select({
+      userName: 1,
+      rating: 1,
+      review: 1,
+    })
+    .exec((error, websiteReviews) => {
+      if (error) {
+        return res.status(500).json({ error: "Some error occurred" });
+      }
+      res.json(websiteReviews);
+    });
 };

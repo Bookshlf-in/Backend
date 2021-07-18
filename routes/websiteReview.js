@@ -6,6 +6,7 @@ const {
   getWebsiteReview,
   updateWebsiteReview,
   deleteWebsiteReview,
+  getTopWebsiteReviews,
 } = require("../controllers/websiteReview");
 
 router.get("/getWebsiteReview", isSignedIn, getWebsiteReview);
@@ -13,5 +14,7 @@ router.get("/getWebsiteReview", isSignedIn, getWebsiteReview);
 router.post("/updateWebsiteReview", isSignedIn, updateWebsiteReview);
 
 router.delete("/deleteWebsiteReview", isSignedIn, deleteWebsiteReview);
+
+router.get("/getTopWebsiteReviews", getTopWebsiteReviews);
 
 module.exports = router;
