@@ -171,3 +171,25 @@ exports.isSeller = (req, res, next) => {
     next();
   });
 };
+
+exports.getSellerAuth = async (req, res, next) => {
+  if (!req.auth?._id) {
+    console.log("Hola");
+    next();
+  } else {
+    try {
+      const sellerProfile = await SellerProfiles.findOne({
+        userId: req.auth._id,
+      })
+        .select({
+          _id: 1,
+        })
+        .exec();
+      req.auth.sellerId = sellerProfile._id;
+      next();
+    } catch (error) {
+      console.log("Error finding sellerId in getSellerAuth ", error);
+      res.status(500).json({ error: "Some error occurred" });
+    }
+  }
+};
