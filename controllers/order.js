@@ -63,6 +63,11 @@ exports.getOrderDetails = async (req, res) => {
         orderTotal: 1,
       })
       .exec();
+    if (!order) {
+      return res
+        .status(400)
+        .json({ errors: [{ error: "Order not found", param: "orderId" }] });
+    }
     if (!order.customerId.equals(req.auth._id)) {
       return res.status(400).json({
         errors: {
@@ -171,6 +176,7 @@ exports.purchaseBook = async (req, res) => {
     delete book._id;
     book.photo = book.photos.length > 0 ? book.photos[0] : "";
     delete book.photos;
+    book.weightInGrams = book.weightInGrams * purchaseQty;
     const shippingCharges = 40;
     const orderTotal = purchaseQty * book.price + shippingCharges;
     const order = new Orders({
@@ -313,6 +319,7 @@ exports.purchaseCart = async (req, res) => {
         delete book._id;
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
+        book.weightInGrams = book.weightInGrams * purchaseQty;
         const shippingCharges = 40;
         const orderTotal = purchaseQty * book.price + shippingCharges;
         const newObj = {
