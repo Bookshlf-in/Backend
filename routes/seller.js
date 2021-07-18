@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { isSignedIn, isSeller } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isSeller,
+  getAuth,
+  getSellerAuth,
+} = require("../controllers/auth");
 const {
   sellerRegister,
   getSellerProfile,
@@ -10,7 +15,7 @@ const {
 
 router.post("/sellerRegister", isSignedIn, sellerRegister);
 
-router.get("/getSellerProfile", isSignedIn, getSellerProfile);
+router.get("/getSellerProfile", getAuth, getSellerAuth, getSellerProfile);
 
 router.post("/updateSellerProfile", isSignedIn, isSeller, updateSellerProfile);
 

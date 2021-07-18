@@ -37,17 +37,11 @@ exports.sellerRegister = async (req, res) => {
 };
 
 exports.getSellerProfile = (req, res) => {
-  let findParameter;
-  if (req.query?.sellerId) {
-    if (!mongoose.Types.ObjectId.isValid(req.query.sellerId)) {
-      return res.status(400).json({ error: "Seller not exist" });
-    }
-    findParameter = { _id: req.query.sellerId };
-  } else {
-    findParameter = { userId: req.auth._id };
+  const sellerId = req.query?.sellerId || req.auth?.sellerId;
+  if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+    return res.status(400).json({ error: "Seller does not exist" });
   }
-
-  const query = SellerProfiles.findOne(findParameter).select({
+  const query = SellerProfiles.findOne({ _id: sellerId }).select({
     userId: 0,
     __v: 0,
   });
