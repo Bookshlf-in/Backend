@@ -15,7 +15,6 @@ const cartRoutes = require("./cart");
 const wishlistRoutes = require("./wishlist");
 const orderRoutes = require("./order");
 const checkoutRoutes = require("./checkout");
-const ratingRoutes = require("./rating");
 const reviewRoutes = require("./review");
 const protectedRoutes = require("./protected");
 
@@ -33,7 +32,6 @@ router.use("/", cartRoutes);
 router.use("/", wishlistRoutes);
 router.use("/", orderRoutes);
 router.use("/", checkoutRoutes);
-router.use("/", ratingRoutes);
 router.use("/", reviewRoutes);
 router.use("/", protectedRoutes);
 
