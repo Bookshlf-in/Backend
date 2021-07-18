@@ -22,9 +22,12 @@ const reviewSchema = mongoose.Schema(
       type: String,
       requird: true,
     },
+    rating: {
+      type: Number,
+      required: true,
+    },
     review: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true }

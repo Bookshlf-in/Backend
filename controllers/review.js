@@ -44,16 +44,41 @@ exports.addReview = async (req, res) => {
     if (review) {
       return res.status(400).json({ error: "Already reviewed" });
     }
-    const newReview = new Reviews({
+    const newReviewObj = {
       ...order,
       orderId,
-      review: req.body.review,
-    });
+      rating: req.body.rating,
+    };
+    if (req.body.review) newReviewObj.review = req.body.review;
+    const newReview = new Reviews(newReviewObj);
     await newReview.save();
 
+    const sellerProfile = await SellerProfiles.findOne({
+      _id: newReview.sellerId,
+    })
+      .select({
+        rating: 1,
+        noOfRatings: 1,
+      })
+      .exec();
+    const sellerRating =
+      (sellerProfile.rating * sellerProfile.noOfRatings + req.body.rating) /
+      (1 + sellerProfile.noOfRatings);
+    let updateSellerObj = {};
+    if (req.body.review) {
+      updateSellerObj = {
+        rating: sellerRating,
+        $inc: { noOfRatings: 1, noOfReviews: 1 },
+      };
+    } else {
+      updateSellerObj = {
+        rating: sellerRating,
+        $inc: { noOfRatings: 1 },
+      };
+    }
     await SellerProfiles.updateOne(
       { _id: newReview.sellerId },
-      { $inc: { noOfReviews: 1 } }
+      updateSellerObj
     );
 
     res.json({ msg: "Review added" });
@@ -92,13 +117,44 @@ exports.updateReview = async (req, res) => {
         .status(400)
         .json({ error: "You are not authorized to update this review" });
     }
+    const updateReviewObj = {
+      rating: req.body.rating,
+    };
+    if (req.body.review) updateReviewObj.review = req.body.review;
     const updatedReview = await Reviews.updateOne(
       { _id: reviewId },
-      { review: req.body.review }
+      updateReviewObj
     ).exec();
     if (updatedReview.nModified != 1) {
       return res.status(500).json({ error: "Failed to update review" });
     }
+
+    const sellerProfile = await SellerProfiles.findOne({
+      _id: review.sellerId,
+    })
+      .select({
+        rating: 1,
+        noOfRatings: 1,
+      })
+      .exec();
+    const sellerRating =
+      (sellerProfile.rating * sellerProfile.noOfRatings -
+        review.rating +
+        req.body.rating) /
+      sellerProfile.noOfRatings;
+    let updateSellerObj = {};
+    if (!review.review && req.body.review) {
+      updateSellerObj = {
+        rating: sellerRating,
+        $inc: { noOfReviews: 1 },
+      };
+    } else {
+      updateSellerObj = {
+        rating: sellerRating,
+      };
+    }
+    await SellerProfiles.updateOne({ _id: review.sellerId }, updateSellerObj);
+
     res.json({ msg: "Review updated" });
   } catch (error) {
     console.log("Error occurred updating review at /updateReview ", error);
@@ -140,10 +196,17 @@ exports.deleteReview = async (req, res) => {
       return res.status(500).json({ error: "Failed to delete review" });
     }
 
-    await SellerProfiles.updateOne(
-      { _id: review.sellerId },
-      { $inc: { noOfReviews: -1 } }
-    );
+    let updateSellerObj = {};
+    if (review.review) {
+      updateSellerObj = {
+        $inc: { noOfRatings: -1, noOfReviews: -1 },
+      };
+    } else {
+      updateSellerObj = {
+        $inc: { noOfRatings: -1 },
+      };
+    }
+    await SellerProfiles.updateOne({ _id: review.sellerId }, updateSellerObj);
 
     res.json({ msg: "Review deleted" });
   } catch (error) {

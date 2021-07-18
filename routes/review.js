@@ -15,7 +15,13 @@ router.post(
   isSignedIn,
   [
     check("orderId").notEmpty().withMessage("Order Id required"),
-    check("review").notEmpty().withMessage("Review required"),
+    check("rating")
+      .notEmpty()
+      .withMessage("Rating requird")
+      .isNumeric()
+      .withMessage("Rating should be numeric")
+      .custom((value) => value >= 1 && value <= 5)
+      .withMessage("Rating should be between 1 and 5"),
   ],
   handleValidationError,
   addReview
@@ -26,7 +32,13 @@ router.post(
   isSignedIn,
   [
     check("reviewId").notEmpty().withMessage("Review Id required"),
-    check("review").notEmpty().withMessage("Review required"),
+    check("rating")
+      .notEmpty()
+      .withMessage("Rating requird")
+      .isNumeric()
+      .withMessage("Rating should be numeric")
+      .custom((value) => value >= 1 && value <= 5)
+      .withMessage("Rating should be between 1 and 5"),
   ],
   handleValidationError,
   updateReview
