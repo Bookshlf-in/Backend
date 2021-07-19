@@ -22,8 +22,8 @@ exports.search = async (req, res) => {
     }
 
     if (req.query.q.substr(0, 4) === "tag:") {
-      const tag = req.query.q.substr(4);
-      const findObj = {
+      const tag = req.query.q.substr(4).trim();
+      let findObj = {
         isAvailable: true,
         tags: {
           $elemMatch: {
@@ -32,6 +32,7 @@ exports.search = async (req, res) => {
           },
         },
       };
+      if (tag === "ALL") findObj = {};
       const dataCount = await Books.countDocuments(findObj);
       const books = await Books.find(findObj)
         .skip((page - 1) * noOfBooksInOnePage)
