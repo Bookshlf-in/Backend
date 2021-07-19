@@ -10,7 +10,7 @@ exports.search = async (req, res) => {
     }
     const userId = req.auth?._id;
     const page = req.query.page || 1;
-    const noOfBooksInOnePage = req.query.noOfBooksInOnePage || 10;
+    const noOfBooksInOnePage = Number(req.query.noOfBooksInOnePage) || 10;
 
     if (page < 1) {
       return res.status(400).json({ error: "page value should be positive" });
@@ -19,6 +19,70 @@ exports.search = async (req, res) => {
       return res
         .status(400)
         .json({ error: "noOfBooksInOnePage should be positive" });
+    }
+
+    if (req.query.q.substr(0, 4) === "tag:") {
+      const tag = req.query.q.substr(4);
+      const findObj = {
+        isAvailable: true,
+        tags: {
+          $elemMatch: {
+            $regex: `^${tag}$`,
+            $options: "i",
+          },
+        },
+      };
+      const dataCount = await Books.countDocuments(findObj);
+      const books = await Books.find(findObj)
+        .skip((page - 1) * noOfBooksInOnePage)
+        .limit(noOfBooksInOnePage)
+        .select({
+          _id: 1,
+          title: 1,
+          MRP: 1,
+          price: 1,
+          editionYear: 1,
+          author: 1,
+          updatedAt: 1,
+          sellerName: 1,
+          sellerId: 1,
+          language: 1,
+          photos: { $slice: 1 },
+        })
+        .exec();
+      const data = await Promise.all(
+        books.map(async (book) => {
+          book = book._doc;
+          book.photo = book.photos?.length > 0 ? book.photos[0] : "";
+          delete book.photos;
+          const seller = (
+            await SellerProfiles.findOne({ _id: book.sellerId }).select({
+              _id: 0,
+              rating: 1,
+            })
+          )?._doc;
+          book.sellerRating = seller.rating;
+          book.wishlist = false;
+          book.cart = false;
+          if (userId) {
+            const wishlistItem = await WishlistItems.findOne({
+              userId,
+              bookId: book._id,
+            }).select({ _id: 1 });
+            if (wishlistItem) book.wishlist = true;
+            const cartItem = await CartItems.findOne({
+              userId,
+              bookId: book._id,
+            }).select({ _id: 1 });
+            if (cartItem) book.cart = true;
+          }
+          return book;
+        })
+      );
+      return res.json({
+        totalPages: Math.ceil(dataCount / noOfBooksInOnePage),
+        data,
+      });
     }
 
     let searchResults = await Books.aggregate([
