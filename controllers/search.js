@@ -5,29 +5,63 @@ const WishlistItems = require("../models/wishlistItems");
 
 exports.search = async (req, res) => {
   try {
+    if (!req.query?.q) {
+      return res.status(400).json({ error: "Query required" });
+    }
     const userId = req.auth?._id;
-    const books = await Books.find({ isAvailable: true })
-      .sort({ updatedAt: -1 })
-      .limit(50)
-      .select({
-        _id: 1,
-        title: 1,
-        MRP: 1,
-        price: 1,
-        editionYear: 1,
-        author: 1,
-        updatedAt: 1,
-        sellerName: 1,
-        sellerId: 1,
-        photos: { $slice: 1 },
-        language: 1,
+    const page = req.query.page || 1;
+    const noOfBooksInOnePage = req.query.noOfBooksInOnePage || 10;
+
+    if (page < 1) {
+      return res.status(400).json({ error: "page value should be positive" });
+    }
+    if (noOfBooksInOnePage < 1) {
+      return res
+        .status(400)
+        .json({ error: "noOfBooksInOnePage should be positive" });
+    }
+
+    let searchResults = await Books.aggregate([
+      {
+        $search: {
+          index: "Books",
+          text: { query: req.query.q, path: { wildcard: "*" } },
+        },
+      },
+    ]);
+    let bookCount = 0;
+    searchResults = searchResults
+      .map((obj) => {
+        if (obj.isAvailable) {
+          const newObj = {
+            _id: obj._id,
+            title: obj.title,
+            MRP: obj.MRP,
+            price: obj.price,
+            editionYear: obj.editionYear,
+            author: obj.author,
+            updatedAt: obj.updatedAt,
+            sellerName: obj.sellerName,
+            sellerId: obj.sellerId,
+            language: obj.language,
+            photo: obj.photos.length > 0 ? obj.photos[0] : "",
+          };
+          return newObj;
+        }
       })
-      .exec();
+      .filter((e) => {
+        if (e == undefined) return false;
+        bookCount++;
+        if (
+          bookCount > (page - 1) * noOfBooksInOnePage &&
+          bookCount <= page * noOfBooksInOnePage
+        )
+          return true;
+        return false;
+      });
+
     const data = await Promise.all(
-      books.map(async (book) => {
-        book = book._doc;
-        book.photo = book.photos?.length > 0 ? book.photos[0] : "";
-        delete book.photos;
+      searchResults.map(async (book) => {
         const seller = (
           await SellerProfiles.findOne({ _id: book.sellerId }).select({
             _id: 0,
@@ -52,11 +86,9 @@ exports.search = async (req, res) => {
         return book;
       })
     );
-    res.json(data);
+    res.json({ totalPages: Math.ceil(bookCount / noOfBooksInOnePage), data });
   } catch (error) {
-    console.log("Error searching books in /search", error);
-    res.status(500).json({ error: "Some error occurred" });
+    console.log("Error occurred searching book ", error);
+    return res.status(500).json({ error: "Some error occurred" });
   }
 };
-
-// db.collections.find().sort(key:value).limit(int value).skip(some int value);
