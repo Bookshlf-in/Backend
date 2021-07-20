@@ -32,7 +32,7 @@ exports.search = async (req, res) => {
           },
         },
       };
-      if (tag === "ALL") findObj = {};
+      if (tag === "ALL") findObj = { isAvailable: true };
       const dataCount = await Books.countDocuments(findObj);
       const books = await Books.find(findObj)
         .skip((page - 1) * noOfBooksInOnePage)
