@@ -17,6 +17,7 @@ const orderRoutes = require("./order");
 const checkoutRoutes = require("./checkout");
 const reviewRoutes = require("./review");
 const tagRoutes = require("./tag");
+const adminRoutes = require("./admin");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -35,6 +36,7 @@ router.use("/", orderRoutes);
 router.use("/", checkoutRoutes);
 router.use("/", reviewRoutes);
 router.use("/", tagRoutes);
+router.use("/", adminRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
