@@ -12,7 +12,7 @@ const {
   approveBook,
   rejectBookApproval,
   deleteBook,
-} = require("../controllers/admin");
+} = require("../controllers/adminBook");
 
 const checkBookId = [
   check("bookId")
