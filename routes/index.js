@@ -19,6 +19,7 @@ const reviewRoutes = require("./review");
 const tagRoutes = require("./tag");
 const adminBookRoutes = require("./adminBook");
 const adminMessageRoutes = require("./adminMessage");
+const adminSellerRoutes = require("./adminSeller");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -39,6 +40,7 @@ router.use("/", reviewRoutes);
 router.use("/", tagRoutes);
 router.use("/", adminBookRoutes);
 router.use("/", adminMessageRoutes);
+router.use("/", adminSellerRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
