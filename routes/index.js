@@ -18,6 +18,7 @@ const checkoutRoutes = require("./checkout");
 const reviewRoutes = require("./review");
 const tagRoutes = require("./tag");
 const adminBookRoutes = require("./adminBook");
+const adminMessageRoutes = require("./adminMessage");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -37,6 +38,7 @@ router.use("/", checkoutRoutes);
 router.use("/", reviewRoutes);
 router.use("/", tagRoutes);
 router.use("/", adminBookRoutes);
+router.use("/", adminMessageRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
