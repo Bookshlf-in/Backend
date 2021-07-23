@@ -38,7 +38,7 @@ exports.getSellerProfile = async (req, res) => {
     if (email) {
       const user = await Users.findOne({ email }).select({ _id: 1 });
       findObj = { userId: user.id };
-    } else if (sellerId && mongoose.isValidObjectId()) {
+    } else if (sellerId && mongoose.isValidObjectId(sellerId)) {
       findObj = { _id: sellerId };
     } else {
       return res.status(400).json({ error: "Email or SellerId required" });
