@@ -184,7 +184,8 @@ exports.getSellerAuth = async (req, res, next) => {
           _id: 1,
         })
         .exec();
-      req.auth.sellerId = sellerProfile._id;
+      if(sellerProfile)
+        req.auth.sellerId = sellerProfile._id;
       next();
     } catch (error) {
       console.log("Error finding sellerId in getSellerAuth ", error);
