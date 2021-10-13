@@ -44,11 +44,13 @@ exports.addBook = (req, res) => {
       errors: [{ error: "Invalid address", param: "pickupAddressId" }],
     });
   }
-  req.body.ISBN = req.body.ISBN.replace(/-/g, "");
-  if (!isValidISBN(req.body.ISBN)) {
-    return res
-      .status(400)
-      .json({ errors: [{ error: "Invalid ISBN", param: "ISBN" }] });
+  if (req.body.ISBN) {
+    req.body.ISBN = req.body.ISBN.replace(/-/g, "");
+    if (!isValidISBN(req.body.ISBN)) {
+      return res
+        .status(400)
+        .json({ errors: [{ error: "Invalid ISBN", param: "ISBN" }] });
+    }
   }
 
   req.body.sellerId = req.auth.sellerId;

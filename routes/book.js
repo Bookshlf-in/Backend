@@ -23,7 +23,6 @@ router.post(
     check("language").notEmpty().withMessage("Language is required"),
     check("editionYear").notEmpty().withMessage("Edition Year is required"),
     check("author").notEmpty().withMessage("Author is required"),
-    check("ISBN").notEmpty().withMessage("ISBN No. is required"),
     check("pickupAddressId")
       .notEmpty()
       .withMessage("Pickup Address is required"),

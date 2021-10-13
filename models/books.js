@@ -26,7 +26,6 @@ const bookSchema = mongoose.Schema(
     },
     ISBN: {
       type: String,
-      required: true,
     },
     weightInGrams: {
       type: Number,
