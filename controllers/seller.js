@@ -59,6 +59,8 @@ exports.updateSellerProfile = (req, res) => {
   if (req.body.name) obj.name = req.body.name;
   if (req.body.intro) obj.intro = req.body.intro;
   if (req.body.photo) obj.photo = req.body.photo;
+  if (req.body.phoneNo) obj.phoneNo = req.body.phoneNo;
+  if (req.body.altPhoneNo) obj.altPhoneNo = req.body.altPhoneNo;
 
   const query = SellerProfiles.updateOne({ userId: req.auth._id }, obj);
   query.exec((error, sellerProfile) => {
