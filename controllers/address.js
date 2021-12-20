@@ -7,6 +7,7 @@ exports.addAddress = (req, res) => {
     const address = new Addresses(req.body);
     address.save((error, address) => {
       if (error) {
+        console.log("Error saving address in /addAddress: ", error);
         return res.status(500).json({
           error: "Not able to add address",
         });

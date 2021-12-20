@@ -16,9 +16,7 @@ router.post(
   "/addAddress",
   isSignedIn,
   [
-    check("phoneNo")
-      .isLength({ min: 1 })
-      .withMessage("phone number is required"),
+    check("phoneNo").notEmpty().withMessage("phone number is required"),
     check("address").isLength({ min: 1 }).withMessage("Address is required"),
     check("city").isLength({ min: 1 }).withMessage("City name is required"),
     check("state").isLength({ min: 1 }).withMessage("State name is required"),
