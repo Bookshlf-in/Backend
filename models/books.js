@@ -17,12 +17,10 @@ const bookSchema = mongoose.Schema(
     },
     editionYear: {
       type: Number,
-      required: true,
     },
     author: {
       type: String,
       trim: true,
-      required: true,
     },
     ISBN: {
       type: String,
@@ -32,7 +30,6 @@ const bookSchema = mongoose.Schema(
     },
     MRP: {
       type: Number,
-      required: true,
     },
     price: {
       type: Number,
@@ -40,7 +37,6 @@ const bookSchema = mongoose.Schema(
     },
     language: {
       type: String,
-      required: true,
     },
     embedVideo: {
       type: String,
