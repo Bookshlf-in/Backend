@@ -61,6 +61,8 @@ exports.getOrderDetails = async (req, res) => {
         createdAt: 1,
         updatedAt: 1,
         orderTotal: 1,
+        externalTrackingDetails: 1,
+        externalTrackingLink: 1,
       })
       .exec();
     if (!order) {

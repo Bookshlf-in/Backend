@@ -82,6 +82,12 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    externalTrackingDetails: {
+      type: String,
+    },
+    externalTrackingLink: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
