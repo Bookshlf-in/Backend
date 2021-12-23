@@ -50,6 +50,9 @@ exports.getSellerProfile = (req, res) => {
     if (error) {
       return res.status(400).json({ error: "Seller does not exist" });
     }
+    if (req.query?.sellerId) {
+      delete sellerProfile._doc.walletBalance;
+    }
     res.json(sellerProfile);
   });
 };
