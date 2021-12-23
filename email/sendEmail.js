@@ -7,7 +7,7 @@ const sendEmail = async (subject, html, recieverEmail) => {
     to: recieverEmail,
     from: {
       name: "Bookshlf.in",
-      email: "bookshlf.official@gmail.com",
+      email: "no-reply@bookshlf.in",
     },
     subject,
     html,
