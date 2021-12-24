@@ -24,6 +24,7 @@ const adminSellerRoutes = require("./adminSeller");
 const adminUserRoutes = require("./adminUser");
 const adminOrderRoutes = require("./adminOrder");
 const adminWalletRoutes = require("./adminWallet");
+const adminCommissionRoutes = require("./adminCommission");
 const protectedRoutes = require("./protected");
 
 router.use("/", resetRoutes);
@@ -49,6 +50,7 @@ router.use("/", adminSellerRoutes);
 router.use("/", adminUserRoutes);
 router.use("/", adminOrderRoutes);
 router.use("/", adminWalletRoutes);
+router.use("/", adminCommissionRoutes);
 router.use("/", protectedRoutes);
 
 module.exports = router;
