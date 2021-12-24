@@ -4,6 +4,7 @@ const Books = require("../models/books");
 const Addresses = require("../models/addresses");
 const Orders = require("../models/orders");
 const CartItems = require("../models/cartItems");
+const sendEmail = require("../email/sendEmail");
 
 exports.getOrderList = async (req, res) => {
   try {
@@ -216,6 +217,8 @@ exports.purchaseBook = async (req, res) => {
             Orders.deleteOne({ _id: order._id });
             throw error;
           }
+          const mailText = `<p>Order Id: ${order._id}</p>`;
+          sendEmail("New order placed", mailText, "bookshlf.in@gmail.com");
           res.json({ msg: "Order placed" });
         }
       );
