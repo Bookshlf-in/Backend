@@ -157,3 +157,33 @@ exports.search = async (req, res) => {
     return res.status(500).json({ error: "Some error occurred" });
   }
 };
+
+exports.searchTitle = async (req, res) => {
+  try {
+    if (!req.query?.q) {
+      return res.status(400).json({ error: "Query required" });
+    }
+    const searchResults = await Books.aggregate([
+      {
+        $search: {
+          index: "Books",
+          text: { query: req.query.q, path: { wildcard: "*" } },
+        },
+      },
+    ]);
+    const data = searchResults
+      .map((obj) => {
+        if (obj.isAvailable) {
+          return { title: obj.title };
+        }
+      })
+      .filter((e) => {
+        if (e == undefined) return false;
+        return true;
+      });
+    res.json(data);
+  } catch (error) {
+    console.log("Error occurred in /searchTitle ", error);
+    return res.status(500).json({ error: "Some error occurred" });
+  }
+};
