@@ -1,16 +1,5 @@
 const mongoose = require("mongoose");
 
-const phoneNoSchema = new mongoose.Schema({
-  countryCode: {
-    type: Number,
-    default: 91,
-  },
-  number: {
-    type: Number,
-    required: true,
-  },
-});
-
 const addressSchema = mongoose.Schema(
   {
     userId: {
@@ -22,11 +11,11 @@ const addressSchema = mongoose.Schema(
       trim: true,
     },
     phoneNo: {
-      type: phoneNoSchema,
+      type: Number,
       required: true,
     },
     altPhoneNo: {
-      type: phoneNoSchema,
+      type: Number,
     },
     address: {
       type: String,
