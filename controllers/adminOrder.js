@@ -1,5 +1,7 @@
 const Orders = require("../models/orders");
 const SellerProfiles = require("../models/sellerProfiles");
+const SellerTransactions = require("../models/sellerTransactions");
+const Commissions = require("../models/commissions");
 
 exports.getOrderList = async (req, res) => {
   try {
@@ -229,6 +231,73 @@ exports.markOrderAsCancelled = async (req, res) => {
     res.json({ msg: "Order updated" });
   } catch (error) {
     console.log("Error in /admin-cancelOrder ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
+
+exports.sendSellerPayment = async (req, res) => {
+  try {
+    const orderId = req.body.orderId;
+    const order = await Orders.findOne({ _id: orderId }).select({
+      _id: 0,
+      title: 1,
+      price: 1,
+      sellerId: 1,
+      isSellerPaid: 1,
+      purchaseQty: 1,
+    });
+    if (!order) {
+      return res.status(400).json({ error: "Order does not exist" });
+    }
+    if (order.isSellerPaid) {
+      return res.status(400).json({ error: "Seller already paid" });
+    }
+    const price = order.price * order.purchaseQty;
+
+    const commissionChart = await Commissions.find().sort({ priceLimit: 1 });
+    let fixedCommission = 0;
+    let percentCommission = 0;
+    for (let i = 0; i < commissionChart.length; i++) {
+      const obj = commissionChart[i];
+      fixedCommission = obj.fixedCommission;
+      percentCommission = obj.percentCommission;
+      if (obj.priceLimit >= price) {
+        break;
+      }
+    }
+    const sellerEarning =
+      ((price - fixedCommission) * (100 - percentCommission)) / 100;
+
+    // Increment wallet amount
+    const modifiedSellerProfile = await SellerProfiles.updateOne(
+      { _id: order.sellerId },
+      { $inc: { walletBalance: sellerEarning } }
+    );
+    if (modifiedSellerProfile.nModified != 1) {
+      return res
+        .status(500)
+        .json({ error: "Failed to add money to seller wallet" });
+    }
+
+    // Update order to mark isSellerPaid as true
+    const updatedOrder = await Orders.updateOne(
+      { _id: orderId },
+      { isSellerPaid: true }
+    );
+
+    // New Transaion
+    const transactionObj = {
+      type: "CREDIT",
+      title: `Sold ${order.title}`,
+      amount: sellerEarning,
+      sellerId: order.sellerId,
+    };
+    const sellerTransaction = new SellerTransactions(transactionObj);
+    const newSellerTransaction = await sellerTransaction.save();
+
+    res.json({ msg: `Paid ${price} to seller` });
+  } catch (error) {
+    console.log("Error in /admin-sendSellerPayment ", error);
     res.status(500).json({ error: "Some error occurred" });
   }
 };

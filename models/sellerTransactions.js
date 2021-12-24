@@ -22,7 +22,6 @@ const sellerTransactionSchema = mongoose.Schema(
     },
     txnNumber: {
       type: String,
-      required: true,
     },
     amount: {
       type: Number,

@@ -15,6 +15,7 @@ const {
   markOrderAsShipped,
   markOrderAsCompleted,
   markOrderAsCancelled,
+  sendSellerPayment,
 } = require("../controllers/adminOrder");
 
 const checkOrderId = [
@@ -105,6 +106,15 @@ router.post(
   checkOrderId,
   handleValidationError,
   markOrderAsCancelled
+);
+
+router.post(
+  "/admin-sendSellerPayment",
+  isSignedIn,
+  isAdmin,
+  checkOrderId,
+  handleValidationError,
+  sendSellerPayment
 );
 
 module.exports = router;

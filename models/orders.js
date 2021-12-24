@@ -88,6 +88,10 @@ const orderSchema = mongoose.Schema(
     externalTrackingLink: {
       type: String,
     },
+    isSellerPaid: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
