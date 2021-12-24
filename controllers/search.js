@@ -161,7 +161,7 @@ exports.search = async (req, res) => {
 exports.searchTitle = async (req, res) => {
   try {
     if (!req.query?.q) {
-      return res.status(400).json({ error: "Query required" });
+      return res.json([]);
     }
     const searchResults = await Books.aggregate([
       {
