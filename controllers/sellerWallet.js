@@ -47,7 +47,7 @@ exports.withdrawFromWallet = async (req, res) => {
     const newWithdrawRequest = await withdrawRequest.save();
 
     const mailText = `<p>Seller Id: ${sellerId} <br> Request Id: ${newWithdrawRequest._id}</p>`;
-    sendEmail("New withdraw request", mailText, "bookshlf.in@gmail.com");
+    sendEmail("New withdraw request", mailText, process.env.ADMIN_EMAIL);
 
     res.json({ msg: "Withdraw request initiated", ...newWithdrawRequest._doc });
   } catch (error) {

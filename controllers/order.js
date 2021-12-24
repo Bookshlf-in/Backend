@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 const Users = require("../models/users");
 const Books = require("../models/books");
 const Addresses = require("../models/addresses");
@@ -218,7 +219,7 @@ exports.purchaseBook = async (req, res) => {
             throw error;
           }
           const mailText = `<p>Order Id: ${order._id}</p>`;
-          sendEmail("New order placed", mailText, "bookshlf.in@gmail.com");
+          sendEmail("New order placed", mailText, process.env.ADMIN_EMAIL);
           res.json({ msg: "Order placed" });
         }
       );
