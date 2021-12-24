@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const resetRoutes = require("./reset");
 const authRoutes = require("./auth");
 const accountRoutes = require("./account");
 const addressRoutes = require("./address");
@@ -26,9 +25,7 @@ const adminUserRoutes = require("./adminUser");
 const adminOrderRoutes = require("./adminOrder");
 const adminWalletRoutes = require("./adminWallet");
 const adminCommissionRoutes = require("./adminCommission");
-const protectedRoutes = require("./protected");
 
-router.use("/", resetRoutes);
 router.use("/", authRoutes);
 router.use("/", accountRoutes);
 router.use("/", addressRoutes);
@@ -53,6 +50,5 @@ router.use("/", adminUserRoutes);
 router.use("/", adminOrderRoutes);
 router.use("/", adminWalletRoutes);
 router.use("/", adminCommissionRoutes);
-router.use("/", protectedRoutes);
 
 module.exports = router;
