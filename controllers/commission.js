@@ -16,26 +16,27 @@ exports.getSellerEarning = async (req, res) => {
     if (price < 100) {
       return res
         .status(400)
-        .json({ error: "Price should be greater than or equal to 100" });
+        .json({ error: "Price cannot be smaller than 100" });
     }
     const commissionChart = await Commissions.find().sort({ priceLimit: 1 });
     let fixedCommission = 0;
     let percentCommission = 0;
     for (let i = 0; i < commissionChart.length; i++) {
       const obj = commissionChart[i];
-      console.log(obj);
       fixedCommission = obj.fixedCommission;
       percentCommission = obj.percentCommission;
       if (obj.priceLimit >= price) {
         break;
       }
     }
+    const sellerEarning =
+      ((price - fixedCommission) * (100 - percentCommission)) / 100;
+
     res.json({
-      fixedCommission,
-      percentCommission,
+      sellerEarning,
     });
   } catch (error) {
-    console.log("Error in /getCommissionChart ", error);
+    console.log("Error in /getSellerEarning ", error);
     res.status(500).json({ error: "Some error occurred" });
   }
 };
