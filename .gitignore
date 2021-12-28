@@ -1,3 +1,4 @@
 .env
 app.yaml
+/tmp
 /node_modules/

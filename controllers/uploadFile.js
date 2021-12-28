@@ -1,11 +1,14 @@
 "use strict";
 require("dotenv").config();
-const os = require("os");
 const fs = require("fs");
 const path = require("path");
 const { Storage } = require("@google-cloud/storage");
 
-const gcKeyPath = path.join(`${os.tmpdir()}/gcloud-key.json`);
+var dir = `${__dirname}/../tmp`;
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
+const gcKeyPath = path.join(dir, "/gcloud-key.json");
 fs.writeFileSync(gcKeyPath, process.env.GCLOUD_JSON_KEY);
 
 const gcKeyFile = JSON.parse(process.env.GCLOUD_JSON_KEY);
