@@ -1,18 +1,24 @@
 "use strict";
 require("dotenv").config();
-
+const fs = require("fs");
+const path = require("path");
 const { Storage } = require("@google-cloud/storage");
 
-const CLOUD_BUCKET = process.env.CLOUD_BUCKET;
+const gcKeyPath = path.join(`${__dirname}/../gcloud-key.json`);
+fs.writeFileSync(gcKeyPath, process.env.GCLOUD_JSON_KEY);
+
+const gcKeyFile = JSON.parse(process.env.GCLOUD_JSON_KEY);
+const GCLOUD_BUCKET = process.env.GCLOUD_BUCKET;
 
 const storage = new Storage({
-  projectId: process.env.GCLOUD_PROJECT,
-  keyFilename: process.env.GCLOUD_KEYFILE_PATH,
+  projectId: gcKeyFile.project_id,
+  keyFilename: gcKeyPath,
 });
-const bucket = storage.bucket(CLOUD_BUCKET);
+
+const bucket = storage.bucket(GCLOUD_BUCKET);
 
 const getPublicUrl = (filename) => {
-  return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
+  return `https://storage.googleapis.com/${GCLOUD_BUCKET}/${filename}`;
 };
 
 exports.sendUploadToGCS = (req, res, next) => {

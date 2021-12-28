@@ -1,3 +1,4 @@
 .env
 gcloud-key.json
+app.yaml
 /node_modules/
