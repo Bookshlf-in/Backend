@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { Storage } = require("@google-cloud/storage");
 
-var dir = `${__dirname}/../tmp`;
+const dir = "/tmp";
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
