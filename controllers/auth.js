@@ -7,7 +7,6 @@ const { EMAIL_VERIFICATION } = require("../email/otp.types");
 require("dotenv").config();
 
 exports.signUp = async (req, res) => {
-  req.body.email = req.body.email.toLowerCase();
   try {
     const existingUser = await Users.findOne({ email: req.body.email });
     if (existingUser && existingUser.emailVerified) {
@@ -48,7 +47,6 @@ exports.signUp = async (req, res) => {
 };
 
 exports.signIn = (req, res) => {
-  req.body.email = req.body.email.toLowerCase();
   const { email, password } = req.body;
 
   Users.findOne({ email, emailVerified: true }, (error, user) => {

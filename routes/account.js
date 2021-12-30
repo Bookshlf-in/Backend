@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
+
+const { emailToLowerCase } = require("../functions/emailToLowerCase");
 const { handleValidationError } = require("../functions/validator");
 
 const { isSignedIn } = require("../controllers/auth");
@@ -14,6 +16,7 @@ const {
 
 router.post(
   "/sendVerifyEmailOtp",
+  emailToLowerCase,
   [check("email").isEmail().withMessage("Email is required")],
   handleValidationError,
   sendVerifyEmailOtp
@@ -21,6 +24,7 @@ router.post(
 
 router.post(
   "/verifyEmail",
+  emailToLowerCase,
   [
     check("otp").isLength({ min: 6 }).withMessage("OTP should be of 6 digits"),
     check("email").isEmail().withMessage("Email is required"),
@@ -31,6 +35,7 @@ router.post(
 
 router.post(
   "/sendResetPasswordOtp",
+  emailToLowerCase,
   [check("email").isEmail().withMessage("Email is required")],
   handleValidationError,
   sendResetPasswordOtp
@@ -38,6 +43,7 @@ router.post(
 
 router.post(
   "/resetPassword",
+  emailToLowerCase,
   [
     check("otp").isLength({ min: 6 }).withMessage("OTP should be of 6 digits"),
     check("email").isEmail().withMessage("Email is required"),

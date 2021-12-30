@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
+const { emailToLowerCase } = require("../functions/emailToLowerCase");
 const { handleValidationError } = require("../functions/validator");
 const { signUp, signIn, signOut } = require("../controllers/auth");
 
 router.post(
   "/signUp",
+  emailToLowerCase,
   [
     check("name")
       .isLength({ min: 3 })
@@ -25,6 +27,7 @@ router.post(
 
 router.post(
   "/signIn",
+  emailToLowerCase,
   [
     check("email").isEmail().withMessage("Email is required"),
     check("password").isLength({ min: 1 }).withMessage("Password is required"),

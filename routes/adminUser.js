@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const { check } = require("express-validator");
 
+const { emailToLowerCase } = require("../functions/emailToLowerCase");
 const { handleValidationError } = require("../functions/validator");
 const { isSignedIn, isAdmin } = require("../controllers/auth");
 const {
@@ -22,7 +23,13 @@ const checkUserId = [
 
 router.get("/admin-getUserList", isSignedIn, isAdmin, getUserList);
 
-router.get("/admin-getUserProfile", isSignedIn, isAdmin, getUserProfile);
+router.get(
+  "/admin-getUserProfile",
+  isSignedIn,
+  isAdmin,
+  emailToLowerCase,
+  getUserProfile
+);
 
 router.get(
   "/admin-getUserAddressList",
