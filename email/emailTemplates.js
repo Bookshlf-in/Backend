@@ -28,7 +28,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/facebook-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/facebook-square.png"
                           alt="Facebook"
                           width="32"
                           height="32"
@@ -46,7 +46,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/instagram-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/instagram-square.png"
                           alt="instagram"
                           width="32"
                           height="32"
@@ -64,7 +64,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/youtube-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/youtube-square.png"
                           alt="youtube"
                           width="32"
                           height="32"
@@ -89,7 +89,7 @@ style="font-family: sans-serif"
           <tr>
             <td align="center" style="padding-top: 20px">
               <img
-                src="https://img.bookshlf.in/logo/smallLogo.png"
+                src="https://storage.googleapis.com/bookshlf-in/static/logo/smallLogo.png"
                 alt="Bookshlf Logo"
                 height="200"
                 width="200"
@@ -177,10 +177,10 @@ style="font-family: sans-serif"
                 All rights reserved BookShlf <br />
                 If you have any issues, please don't hesitate to contact us at
                 <a
-                  href="mailto:contact@bookshlf.in"
+                  href="mailto:bookshlf-in@gmail.com"
                   target="_blank"
                   style="color: #31bff7"
-                  >contact@bookshlf.in</a
+                  >bookshlf-in@gmail.com</a
                 >
               </p>
             </td>
@@ -234,7 +234,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/facebook-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/facebook-square.png"
                           alt="Facebook"
                           width="32"
                           height="32"
@@ -252,7 +252,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/instagram-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/instagram-square.png"
                           alt="instagram"
                           width="32"
                           height="32"
@@ -270,7 +270,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/youtube-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/youtube-square.png"
                           alt="youtube"
                           width="32"
                           height="32"
@@ -295,7 +295,7 @@ style="font-family: sans-serif"
           <tr>
             <td align="center" style="padding-top: 20px">
               <img
-                src="https://img.bookshlf.in/logo/smallLogo.png"
+                src="https://storage.googleapis.com/bookshlf-in/static/logo/smallLogo.png"
                 alt="Bookshlf Logo"
                 height="100"
                 width="100"
@@ -382,10 +382,10 @@ style="font-family: sans-serif"
                 All rights reserved BookShlf <br />
                 If you have any issues, please don't hesitate to contact us at
                 <a
-                  href="mailto:contact@bookshlf.in"
+                  href="mailto:bookshlf-in@gmail.com"
                   target="_blank"
                   style="color: #31bff7"
-                  >contact@bookshlf.in</a
+                  >bookshlf-in@gmail.com</a
                 >
               </p>
             </td>
@@ -439,7 +439,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/facebook-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/facebook-square.png"
                           alt="Facebook"
                           width="32"
                           height="32"
@@ -457,7 +457,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/instagram-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/instagram-square.png"
                           alt="instagram"
                           width="32"
                           height="32"
@@ -475,7 +475,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/youtube-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/youtube-square.png"
                           alt="youtube"
                           width="32"
                           height="32"
@@ -500,7 +500,7 @@ style="font-family: sans-serif"
           <tr>
             <td align="center" style="padding-top: 20px">
               <img
-                src="https://img.bookshlf.in/logo/smallLogo.png"
+                src="https://storage.googleapis.com/bookshlf-in/static/logo/smallLogo.png"
                 alt="Bookshlf Logo"
                 height="100"
                 width="100"
@@ -587,10 +587,10 @@ style="font-family: sans-serif"
                 All rights reserved BookShlf <br />
                 If you have any issues, please don't hesitate to contact us at
                 <a
-                  href="mailto:contact@bookshlf.in"
+                  href="mailto:bookshlf-in@gmail.com"
                   target="_blank"
                   style="color: #31bff7"
-                  >contact@bookshlf.in</a
+                  >bookshlf-in@gmail.com</a
                 >
               </p>
             </td>
@@ -644,7 +644,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/facebook-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/facebook-square.png"
                           alt="Facebook"
                           width="32"
                           height="32"
@@ -662,7 +662,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/instagram-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/instagram-square.png"
                           alt="instagram"
                           width="32"
                           height="32"
@@ -680,7 +680,7 @@ style="font-family: sans-serif"
                         target="_blank"
                       >
                         <img
-                          src="https://img.bookshlf.in/social/youtube-square.png"
+                          src="https://storage.googleapis.com/bookshlf-in/static/social/youtube-square.png"
                           alt="youtube"
                           width="32"
                           height="32"
@@ -705,7 +705,7 @@ style="font-family: sans-serif"
           <tr>
             <td align="center" style="padding-top: 20px">
               <img
-                src="https://img.bookshlf.in/logo/smallLogo.png"
+                src="https://storage.googleapis.com/bookshlf-in/static/logo/smallLogo.png"
                 alt="Bookshlf Logo"
                 height="100"
                 width="100"
@@ -791,10 +791,10 @@ style="font-family: sans-serif"
                 All rights reserved BookShlf <br />
                 If you have any issues, please don't hesitate to contact us at
                 <a
-                  href="mailto:contact@bookshlf.in"
+                  href="mailto:bookshlf-in@gmail.com"
                   target="_blank"
                   style="color: #31bff7"
-                  >contact@bookshlf.in</a
+                  >bookshlf-in@gmail.com</a
                 >
               </p>
             </td>
