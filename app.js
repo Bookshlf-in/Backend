@@ -12,7 +12,6 @@ mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   })
   .then(() => {
     console.log("DB CONNECTED");
@@ -25,7 +24,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://bookshlf.web.app"],
+    origin: JSON.parse(process.env.CORS_ORIGIN),
   })
 );
 
