@@ -11,6 +11,7 @@ exports.getOrderList = async (req, res) => {
   try {
     const customerId = req.auth._id;
     const orderList = await Orders.find({ customerId })
+      .sort({ createdAt: -1 })
       .select({
         _id: 1,
         photo: 1,

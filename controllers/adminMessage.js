@@ -14,7 +14,7 @@ exports.getMessageList = async (req, res) => {
     }
     const messageCount = await Messages.countDocuments();
     const messages = await Messages.find()
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip((page - 1) * noOfMessagesInOnePage)
       .limit(noOfMessagesInOnePage)
       .exec();
