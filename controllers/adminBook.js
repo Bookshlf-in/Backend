@@ -13,11 +13,13 @@ exports.getBookList = async (req, res) => {
         .status(400)
         .json({ error: "noOfBooksInOnePage should be positive" });
     }
-    const bookCount = await Books.countDocuments({
-      status: { $ne: "Deleted" },
-    });
-    const books = await Books.find({ status: { $ne: "Deleted" } })
-      .sort({ updatedAt: 1 })
+    let findObj = { status: { $ne: "Deleted" } };
+    if (req.query?.isApproved) {
+      findObj.isApproved = req.query.isApproved == "true" ? true : false;
+    }
+    const bookCount = await Books.countDocuments(findObj);
+    const books = await Books.find(findObj)
+      .sort({ createdAt: -1 })
       .skip((page - 1) * noOfBooksInOnePage)
       .limit(noOfBooksInOnePage)
       .exec();
