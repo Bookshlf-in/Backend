@@ -21,6 +21,16 @@ exports.search = async (req, res) => {
         .json({ error: "noOfBooksInOnePage should be positive" });
     }
 
+    let sortObj = {};
+
+    if (req.query?.sortByDate) {
+      sortObj.updatedAt = req.query.sortByDate;
+    }
+
+    if (req.query?.sortByPrice) {
+      sortObj.price = req.query.sortByPrice;
+    }
+
     if (req.query.q.substr(0, 4) === "tag:") {
       const tag = req.query.q.substr(4).trim();
       let findObj = {
@@ -35,6 +45,7 @@ exports.search = async (req, res) => {
       if (tag === "ALL") findObj = { isAvailable: true };
       const dataCount = await Books.countDocuments(findObj);
       const books = await Books.find(findObj)
+        .sort(sortObj)
         .skip((page - 1) * noOfBooksInOnePage)
         .limit(noOfBooksInOnePage)
         .select({
@@ -93,7 +104,7 @@ exports.search = async (req, res) => {
           text: { query: req.query.q, path: { wildcard: "*" } },
         },
       },
-    ]);
+    ]).sort(sortObj);
     let bookCount = 0;
     searchResults = searchResults
       .map((obj) => {
