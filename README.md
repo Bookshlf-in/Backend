@@ -25,7 +25,7 @@ You will need `node` and `npm` installed globally on your machine.
 - Open terminal, write the following command and press enter.
 
 ```bash
-$ npm -v
+  $ npm -v
 ```
 
 The terminal should return your npm version.
@@ -47,7 +47,7 @@ The terminal should return your npm version.
 - Write the following command and press enter to download all required node modules.
 
 ```bash
-$ npm install
+  $ npm install
 ```
 
 #### 3. To run locally, you are required to setup some environment variables
