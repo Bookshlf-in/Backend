@@ -25,7 +25,6 @@ const orderSchema = mongoose.Schema(
     },
     MRP: {
       type: Number,
-      required: true,
     },
     price: {
       type: Number,
