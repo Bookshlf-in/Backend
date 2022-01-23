@@ -37,13 +37,18 @@ exports.verifyEmail = async (req, res) => {
   }
 
   const updatedEmailOtp = await EmailOtp.updateMany(
-    { email, type: EMAIL_VERIFICATION, count: { $lt: 5 } },
+    { email, type: EMAIL_VERIFICATION, count: { $lt: 10 } },
     { $inc: { count: 1 } }
   ).exec();
 
   if (updatedEmailOtp?.nModified === 0) {
     return res.status(550).json({
-      error: "Limit exceeded, generate new otp",
+      errors: [
+        {
+          error: "Limit exceeded, generate new otp",
+          param: "otp",
+        },
+      ],
     });
   }
 
