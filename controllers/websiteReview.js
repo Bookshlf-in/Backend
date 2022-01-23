@@ -83,7 +83,7 @@ exports.deleteWebsiteReview = (req, res) => {
 exports.getTopWebsiteReviews = (req, res) => {
   WebsiteReviews.find({ review: { $nin: [undefined, ""] } })
     .sort({ rating: -1 })
-    .limit(6)
+    .limit(10)
     .select({
       userName: 1,
       rating: 1,
