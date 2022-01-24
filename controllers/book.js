@@ -3,6 +3,7 @@ const Books = require("../models/books");
 const SellerProfiles = require("../models/sellerProfiles");
 const CartItems = require("../models/cartItems");
 const WishlistItems = require("../models/wishlistItems");
+const Commissions = require("../models/commissions");
 
 const isValidISBN = (isbn) => {
   let n = isbn.length;
@@ -36,6 +37,22 @@ const isValidISBN = (isbn) => {
     return sum % 10 == 0;
   }
   return false;
+};
+
+const calculateSellerEarnings = (price, commissionChart) => {
+  let fixedCommission = 0;
+  let percentCommission = 0;
+  for (let i = 0; i < commissionChart.length; i++) {
+    const obj = commissionChart[i];
+    fixedCommission = obj.fixedCommission;
+    percentCommission = obj.percentCommission;
+    if (obj.priceLimit >= price) {
+      break;
+    }
+  }
+  const sellerEarning =
+    ((price - fixedCommission) * (100 - percentCommission)) / 100;
+  return sellerEarning;
 };
 
 exports.addBook = (req, res) => {
@@ -112,6 +129,10 @@ exports.getBookDetails = async (req, res) => {
         error: "Book does not exists",
       });
     }
+
+    const commissionChart = await Commissions.find().sort({ priceLimit: 1 });
+    book.sellerEarning = calculateSellerEarnings(book.price, commissionChart);
+
     const seller = (
       await SellerProfiles.findOne({ _id: book.sellerId }).select({
         _id: 1,
@@ -149,22 +170,24 @@ exports.getBookDetails = async (req, res) => {
   }
 };
 
-exports.getBookList = (req, res) => {
-  const query = Books.find({
-    sellerId: req.auth.sellerId,
-    status: { $ne: "Deleted" },
-  });
-  query.exec((error, books) => {
-    if (error) {
-      if (error) {
-        console.log("Error finding books in /getBookList", error);
-      }
-      return res.status(500).json({
-        error: "No book found",
-      });
-    }
-    return res.json(books);
-  });
+exports.getBookList = async (req, res) => {
+  try {
+    const books = await Books.find({
+      sellerId: req.auth.sellerId,
+      status: { $ne: "Deleted" },
+    }).exec();
+
+    const commissionChart = await Commissions.find().sort({ priceLimit: 1 });
+    const bookList = books.map((book) => {
+      book = book?._doc;
+      book.sellerEarning = calculateSellerEarnings(book.price, commissionChart);
+      return book;
+    });
+    return res.json(bookList);
+  } catch (error) {
+    console.log("Error occurred in /getBookList: ", error);
+    res.status(500).json({ error: "Some error occured" });
+  }
 };
 
 exports.deleteBook = (req, res) => {
