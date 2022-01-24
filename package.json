@@ -4,7 +4,7 @@
   "description": "Backend for Bookshlf",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server.js"
   },
   "author": "Rohit Kumar",
   "license": "ISC",
