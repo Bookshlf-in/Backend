@@ -44,6 +44,9 @@ exports.search = async (req, res) => {
       };
       if (tag === "ALL") findObj = { isAvailable: true };
       const dataCount = await Books.countDocuments(findObj);
+      if (!sortObj.sortByPrice && !sortObj.sortByPrice) {
+        sortObj.sortByDate = "desc";
+      }
       const books = await Books.find(findObj)
         .sort(sortObj)
         .skip((page - 1) * noOfBooksInOnePage)
@@ -97,14 +100,26 @@ exports.search = async (req, res) => {
       });
     }
 
-    let searchResults = await Books.aggregate([
-      {
-        $search: {
-          index: "Books",
-          text: { query: req.query.q, path: { wildcard: "*" } },
+    let searchResults;
+    if (sortObj.sortByDate || sortObj.sortByPrice) {
+      searchResults = await Books.aggregate([
+        {
+          $search: {
+            index: "Books",
+            text: { query: req.query.q, path: { wildcard: "*" } },
+          },
         },
-      },
-    ]).sort(sortObj);
+      ]).sort(sortObj);
+    } else {
+      searchResults = await Books.aggregate([
+        {
+          $search: {
+            index: "Books",
+            text: { query: req.query.q, path: { wildcard: "*" } },
+          },
+        },
+      ]);
+    }
     let bookCount = 0;
     searchResults = searchResults
       .map((obj) => {
