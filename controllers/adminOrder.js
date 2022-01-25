@@ -239,12 +239,13 @@ exports.sendSellerPayment = async (req, res) => {
   try {
     const orderId = req.body.orderId;
     const order = await Orders.findOne({ _id: orderId }).select({
-      _id: 0,
+      _id: 1,
       title: 1,
       price: 1,
       sellerId: 1,
       isSellerPaid: 1,
       purchaseQty: 1,
+      bookId: 1,
     });
     if (!order) {
       return res.status(400).json({ error: "Order does not exist" });
