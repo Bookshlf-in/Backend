@@ -91,6 +91,12 @@ const orderSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    sellerTransactionId: {
+      type: mongoose.Types.ObjectId,
+    },
+    adminDeliveryExpense: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

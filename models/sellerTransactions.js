@@ -27,6 +27,12 @@ const sellerTransactionSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    bookId: {
+      type: mongoose.Types.ObjectId,
+    },
+    orderId: {
+      type: mongoose.Types.ObjectId,
+    },
   },
   { timestamps: true }
 );

@@ -279,21 +279,23 @@ exports.sendSellerPayment = async (req, res) => {
         .json({ error: "Failed to add money to seller wallet" });
     }
 
-    // Update order to mark isSellerPaid as true
-    const updatedOrder = await Orders.updateOne(
-      { _id: orderId },
-      { isSellerPaid: true }
-    );
-
     // New Transaion
     const transactionObj = {
       type: "CREDIT",
       title: `Sold ${order.title}`,
       amount: sellerEarning,
       sellerId: order.sellerId,
+      bookId: order.bookId,
+      orderId: order._id,
     };
     const sellerTransaction = new SellerTransactions(transactionObj);
     const newSellerTransaction = await sellerTransaction.save();
+
+    // Update order to mark isSellerPaid as true
+    const updatedOrder = await Orders.updateOne(
+      { _id: orderId },
+      { isSellerPaid: true, sellerTransactionId: newSellerTransaction._id }
+    );
 
     res.json({ msg: `Paid ${price} to seller` });
   } catch (error) {
