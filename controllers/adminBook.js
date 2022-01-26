@@ -13,7 +13,7 @@ exports.getBookList = async (req, res) => {
         .status(400)
         .json({ error: "noOfBooksInOnePage should be positive" });
     }
-    let findObj = { status: { $ne: "Deleted" } };
+    let findObj = { status: { $nin: ["Approval rejected", "Deleted"] } };
     if (req.query?.isApproved) {
       findObj.isApproved = req.query.isApproved == "true" ? true : false;
     }
