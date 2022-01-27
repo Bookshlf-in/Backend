@@ -1,5 +1,7 @@
 const WebsiteReviews = require("../models/websiteReviews");
 const Users = require("../models/users");
+const LRU = require("lru-cache");
+cache = new LRU({ max: 1, maxAge: 1000 * 60 * 60 * 24 }); // refresh every day
 
 exports.getWebsiteReview = (req, res) => {
   const query = WebsiteReviews.findOne({ userId: req.auth._id }).select({
@@ -80,19 +82,28 @@ exports.deleteWebsiteReview = (req, res) => {
   });
 };
 
-exports.getTopWebsiteReviews = (req, res) => {
-  WebsiteReviews.find({ review: { $nin: [undefined, ""] } })
-    .sort({ rating: -1 })
-    .limit(10)
-    .select({
-      userName: 1,
-      rating: 1,
-      review: 1,
+exports.getTopWebsiteReviews = async (req, res) => {
+  try {
+    let websiteReviews = await cache.get("websiteReviews");
+    if (websiteReviews) {
+      return res.json(websiteReviews);
+    }
+    websiteReviews = await WebsiteReviews.find({
+      review: { $nin: [undefined, ""] },
+      rating: 5,
     })
-    .exec((error, websiteReviews) => {
-      if (error) {
-        return res.status(500).json({ error: "Some error occurred" });
-      }
-      res.json(websiteReviews);
-    });
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select({
+        userName: 1,
+        rating: 1,
+        review: 1,
+      })
+      .exec();
+    cache.set("websiteReviews", websiteReviews);
+    res.json(websiteReviews);
+  } catch (error) {
+    console.log("Error occurred at /getTopWebsiteReviews: ", error);
+    res.json({ error: "Some error occurred" });
+  }
 };
