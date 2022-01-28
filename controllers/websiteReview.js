@@ -1,7 +1,6 @@
 const WebsiteReviews = require("../models/websiteReviews");
 const Users = require("../models/users");
-const LRU = require("lru-cache");
-cache = new LRU({ max: 1, maxAge: 1000 * 60 * 60 * 24 }); // refresh every day
+const { websiteReviewCache } = require("../functions/cache");
 
 exports.getWebsiteReview = (req, res) => {
   const query = WebsiteReviews.findOne({ userId: req.auth._id }).select({
@@ -84,7 +83,7 @@ exports.deleteWebsiteReview = (req, res) => {
 
 exports.getTopWebsiteReviews = async (req, res) => {
   try {
-    let websiteReviews = await cache.get("websiteReviews");
+    let websiteReviews = await websiteReviewCache.get("websiteReviews");
     if (websiteReviews) {
       return res.json(websiteReviews);
     }
@@ -100,7 +99,7 @@ exports.getTopWebsiteReviews = async (req, res) => {
         review: 1,
       })
       .exec();
-    cache.set("websiteReviews", websiteReviews);
+    websiteReviewCache.set("websiteReviews", websiteReviews);
     res.json(websiteReviews);
   } catch (error) {
     console.log("Error occurred at /getTopWebsiteReviews: ", error);
