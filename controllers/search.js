@@ -2,6 +2,7 @@ const Books = require("../models/books");
 const SellerProfiles = require("../models/sellerProfiles.js");
 const CartItems = require("../models/cartItems");
 const WishlistItems = require("../models/wishlistItems");
+const { searchTitleCache } = require("../functions/cache");
 
 exports.search = async (req, res) => {
   try {
@@ -186,18 +187,24 @@ exports.search = async (req, res) => {
 
 exports.searchTitle = async (req, res) => {
   try {
+    const query = req.query?.q;
     if (!req.query?.q) {
       return res.json([]);
+    }
+
+    let titleList = await searchTitleCache.get(query);
+    if (titleList) {
+      return res.json(titleList);
     }
     const searchResults = await Books.aggregate([
       {
         $search: {
           index: "Books",
-          text: { query: req.query.q, path: { wildcard: "*" } },
+          text: { query: query, path: { wildcard: "*" } },
         },
       },
-    ]);
-    const data = searchResults
+    ]).limit(10);
+    titleList = searchResults
       .map((obj) => {
         if (obj.isAvailable) {
           return { title: obj.title };
@@ -207,7 +214,8 @@ exports.searchTitle = async (req, res) => {
         if (e == undefined) return false;
         return true;
       });
-    res.json(data);
+    searchTitleCache.set(query, titleList);
+    res.json(titleList);
   } catch (error) {
     console.log("Error occurred in /searchTitle ", error);
     return res.status(500).json({ error: "Some error occurred" });
