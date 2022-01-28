@@ -380,6 +380,11 @@ exports.purchaseCart = async (req, res) => {
       })
     );
     await CartItems.deleteMany({ userId: req.auth._id });
+    sendEmail(
+      "New order placed",
+      "Someone purchase cart",
+      process.env.ADMIN_EMAIL
+    );
     res.json({ msg: "Order placed" });
   } catch (error) {
     console.log("Error occurred in purchase cart: ", error);
