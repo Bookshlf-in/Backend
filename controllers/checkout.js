@@ -2,6 +2,8 @@ const CartItems = require("../models/cartItems");
 const Books = require("../models/books");
 const mongoose = require("mongoose");
 
+const { getShippingCharge } = require("../functions/charges");
+
 exports.checkoutBook = async (req, res) => {
   try {
     const bookId = req.query?.bookId;
@@ -28,7 +30,7 @@ exports.checkoutBook = async (req, res) => {
     delete book._doc._id;
     book._doc.photo = book._doc.photos.length > 0 ? book._doc.photos[0] : "";
     delete book._doc.photos;
-    const shippingCharges = 40;
+    const shippingCharges = getShippingCharge(book.price * purchaseQty);
     const itemsSubtotal = book.price * purchaseQty;
     const orderTotal = shippingCharges + itemsSubtotal;
     res.json({
@@ -49,6 +51,7 @@ exports.checkoutCart = async (req, res) => {
     const cartItems = await CartItems.find({ userId: req.auth._id }).exec();
     let itemsSubtotal = 0;
     let totalItems = 0;
+    let shippingCharges = 0;
     const cartList = await Promise.all(
       cartItems.map(async ({ _id, bookId, createdAt, purchaseQty }) => {
         const book = (
@@ -72,7 +75,9 @@ exports.checkoutCart = async (req, res) => {
         delete book.photos;
         itemsSubtotal += book.price * purchaseQty;
         totalItems += purchaseQty;
-        const obj = { ...book, _id, purchaseQty, createdAt };
+        const shippingCharge = getShippingCharge(book.price * purchaseQty);
+        shippingCharges += shippingCharge;
+        const obj = { ...book, _id, purchaseQty, createdAt, shippingCharge };
         if (book.qty <= 0) {
           obj.error = "Boook sold out";
         } else if (book.qty < purchaseQty) {
@@ -81,7 +86,6 @@ exports.checkoutCart = async (req, res) => {
         return obj;
       })
     );
-    const shippingCharges = cartList.length * 40;
     const orderTotal = itemsSubtotal + shippingCharges;
     const obj = {
       items: cartList,

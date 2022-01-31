@@ -7,6 +7,8 @@ const Orders = require("../models/orders");
 const CartItems = require("../models/cartItems");
 const sendEmail = require("../email/sendEmail");
 
+const { getShippingCharge } = require("../functions/charges");
+
 exports.getOrderList = async (req, res) => {
   try {
     const customerId = req.auth._id;
@@ -182,7 +184,7 @@ exports.purchaseBook = async (req, res) => {
     book.photo = book.photos.length > 0 ? book.photos[0] : "";
     delete book.photos;
     book.weightInGrams = book.weightInGrams * purchaseQty;
-    const shippingCharges = 40;
+    const shippingCharges = getShippingCharge(book.price * purchaseQty);
     const orderTotal = purchaseQty * book.price + shippingCharges;
     const order = new Orders({
       customerName,
@@ -333,7 +335,7 @@ exports.purchaseCart = async (req, res) => {
         book.photo = book.photos.length > 0 ? book.photos[0] : "";
         delete book.photos;
         book.weightInGrams = book.weightInGrams * purchaseQty;
-        const shippingCharges = 40;
+        const shippingCharges = getShippingCharge(book.price * purchaseQty);
         const orderTotal = purchaseQty * book.price + shippingCharges;
         const newObj = {
           ...obj,
