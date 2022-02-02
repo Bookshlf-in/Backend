@@ -19,7 +19,7 @@ exports.getBookList = async (req, res) => {
     }
     const bookCount = await Books.countDocuments(findObj);
     const books = await Books.find(findObj)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip((page - 1) * noOfBooksInOnePage)
       .limit(noOfBooksInOnePage)
       .exec();
