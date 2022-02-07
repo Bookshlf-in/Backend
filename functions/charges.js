@@ -1,4 +1,4 @@
 exports.getShippingCharge = (price) => {
-  if (price < 500) return 19;
+  if (price < 999) return 19;
   return 0;
 };
