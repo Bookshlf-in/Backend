@@ -22,7 +22,7 @@ exports.getOrderList = async (req, res) => {
     }
     const orderCount = await Orders.countDocuments(findObj);
     const orderList = await Orders.find(findObj)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: 1 })
       .skip((page - 1) * noOfOrdersInOnePage)
       .limit(noOfOrdersInOnePage)
       .exec();
