@@ -45,8 +45,8 @@ exports.search = async (req, res) => {
       };
       if (tag === "ALL") findObj = { isAvailable: true };
       const dataCount = await Books.countDocuments(findObj);
-      if (!sortObj.sortByPrice && !sortObj.sortByPrice) {
-        sortObj.sortByDate = "desc";
+      if (!sortObj.updatedAt && !sortObj.price) {
+        sortObj.updatedAt = "desc";
       }
       const books = await Books.find(findObj)
         .sort(sortObj)
@@ -102,7 +102,7 @@ exports.search = async (req, res) => {
     }
 
     let searchResults;
-    if (sortObj.sortByDate || sortObj.sortByPrice) {
+    if (sortObj.updatedAt || sortObj.price) {
       searchResults = await Books.aggregate([
         {
           $search: {
