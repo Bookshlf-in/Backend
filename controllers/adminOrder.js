@@ -59,7 +59,7 @@ exports.updateOrder = async (req, res) => {
       return res.status(400).json({ error: "Order does not exist" });
     }
     const updatedOrder = await Orders.updateOne({ _id: orderId }, req.body);
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to update order" });
     }
     res.json({ msg: "Order updated" });
@@ -78,7 +78,7 @@ exports.changeOrderProgress = async (req, res) => {
       return res.status(400).json({ error: "Order does not exist" });
     }
     const updatedOrder = await Orders.updateOne({ _id: orderId }, { progress });
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to change progress" });
     }
     res.json({ msg: "Order progress updated" });
@@ -108,7 +108,7 @@ exports.addOrderStatus = async (req, res) => {
       { _id: orderId },
       { $push: { status: status } }
     );
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to update order" });
     }
     res.json({ msg: "Order updated" });
@@ -135,7 +135,7 @@ exports.markOrderAsPacked = async (req, res) => {
       { _id: orderId },
       { progress: 25, $push: { status: "Packed" } }
     );
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as packed" });
     }
     res.json({ msg: "Order updated" });
@@ -162,7 +162,7 @@ exports.markOrderAsShipped = async (req, res) => {
       { _id: orderId },
       { progress: 50, $push: { status: "Shipped" } }
     );
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as shipped" });
     }
     res.json({ msg: "Order updated" });
@@ -192,7 +192,7 @@ exports.markOrderAsCompleted = async (req, res) => {
       { _id: orderId },
       { paymentStatus: "Paid", progress: 100, $push: { status: "Delivered" } }
     );
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as delivered" });
     }
     await SellerProfiles.updateOne(
@@ -225,7 +225,7 @@ exports.markOrderAsCancelled = async (req, res) => {
       { _id: orderId },
       { progress: 100, $push: { status: "Cancelled" } }
     );
-    if (updatedOrder.nModified !== 1) {
+    if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as cancelled" });
     }
     res.json({ msg: "Order updated" });
@@ -274,7 +274,7 @@ exports.sendSellerPayment = async (req, res) => {
       { _id: order.sellerId },
       { $inc: { walletBalance: sellerEarning } }
     );
-    if (modifiedSellerProfile.nModified != 1) {
+    if (modifiedSellerProfile.modifiedCount != 1) {
       return res
         .status(500)
         .json({ error: "Failed to add money to seller wallet" });

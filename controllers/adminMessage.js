@@ -41,7 +41,7 @@ exports.markMessageAsRead = async (req, res) => {
       { _id: messageId },
       { read: true }
     );
-    if (updatedMessage.nModified !== 1) {
+    if (updatedMessage.modifiedCount !== 1) {
       return res.status(500).json({ msg: "Unable to mark message as read" });
     }
     res.json({ msg: "Marked message as read" });
@@ -64,7 +64,7 @@ exports.markMessageAsUnread = async (req, res) => {
       { _id: messageId },
       { read: false }
     );
-    if (updatedMessage.nModified !== 1) {
+    if (updatedMessage.modifiedCount !== 1) {
       return res.status(500).json({ msg: "Unable to mark message as unread" });
     }
     res.json({ msg: "Marked message as unread" });

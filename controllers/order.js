@@ -420,7 +420,7 @@ exports.cancelOrder = async (req, res) => {
       { _id: orderId },
       { progress: 100, $push: { status: "Cancelled" } }
     ).exec();
-    if (updatedOrder.nModified != 1)
+    if (updatedOrder.modifiedCount != 1)
       return res.json({ error: "Some error occurred" });
     res.json({ msg: "Order cancelled" });
   } catch (error) {

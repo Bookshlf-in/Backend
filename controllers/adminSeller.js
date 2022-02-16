@@ -120,7 +120,7 @@ exports.markSellerAsVerified = async (req, res) => {
       { _id: sellerId },
       { isVerified: true }
     );
-    if (updatedSeller.nModified !== 1) {
+    if (updatedSeller.modifiedCount !== 1) {
       return res
         .status(500)
         .json({ error: "Failed to mark seller as verified" });
@@ -145,7 +145,7 @@ exports.markSellerAsUnverified = async (req, res) => {
       { _id: sellerId },
       { isVerified: false }
     );
-    if (updatedSeller.nModified !== 1) {
+    if (updatedSeller.modifiedCount !== 1) {
       return res
         .status(500)
         .json({ error: "Failed to mark seller as unverified" });

@@ -9,8 +9,8 @@ const {
 
 const sendEmailOtp = (type, email) => {
   const otp = otpGenerator.generate(6, {
-    alphabets: false,
-    upperCase: false,
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
     specialChars: false,
   });
 

@@ -54,7 +54,7 @@ exports.updateBookDetails = async (req, res) => {
       return res.status(400).json({ error: "Book does not exists" });
     }
     const updatedBook = await Books.updateOne({ _id: bookId }, req.body);
-    if (updatedBook.nModified != 1)
+    if (updatedBook.modifiedCount != 1)
       return res.json({ error: "Failed to update book" });
     res.json({ msg: "Book updated" });
   } catch (error) {
@@ -91,7 +91,7 @@ exports.approveBook = async (req, res) => {
       { _id: bookId },
       { isAvailable: true, isApproved: true, status: "Approved" }
     );
-    if (updatedBook.nModified != 1) {
+    if (updatedBook.modifiedCount != 1) {
       return res.json({ error: "Failed to mark book as approved" });
     }
     await Promise.all(
@@ -127,7 +127,7 @@ exports.rejectBookApproval = async (req, res) => {
         status: "Approval rejected",
       }
     );
-    if (updatedBook.nModified != 1) {
+    if (updatedBook.modifiedCount != 1) {
       return res.json({ error: "Failed to mark book as approved" });
     }
     res.json({ msg: "Book approval rejected" });
@@ -153,7 +153,7 @@ exports.deleteBook = async (req, res) => {
       { _id: bookId },
       { isAvailable: false, status: "Deleted" }
     );
-    if (updatedBook.nModified != 1) {
+    if (updatedBook.modifiedCount != 1) {
       return res.json({ error: "Failed to delete book" });
     }
     res.json({ msg: "Book deleted" });

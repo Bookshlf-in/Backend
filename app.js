@@ -7,14 +7,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
 mongoose
-  .connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    console.log("DB CONNECTED");
-  })
+  .connect(process.env.DATABASE)
+  .then(() => console.log("DB CONNECTED"))
   .catch((error) => console.log("Error connecting to database", error));
 
 //Middlewares

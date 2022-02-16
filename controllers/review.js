@@ -144,7 +144,7 @@ exports.updateReview = async (req, res) => {
       { _id: reviewId },
       updateReviewObj
     ).exec();
-    if (updatedReview.nModified != 1) {
+    if (updatedReview.modifiedCount != 1) {
       return res.status(500).json({ error: "Failed to update review" });
     }
 

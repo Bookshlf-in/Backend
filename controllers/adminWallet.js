@@ -133,7 +133,7 @@ exports.withdrawRequestMarkComplete = async (req, res) => {
       { walletBalance: finalWalletBalance }
     );
 
-    if (modifiedSellerProfile.nModified != 1) {
+    if (modifiedSellerProfile.modifiedCount != 1) {
       return res.status(500).json({ error: "Some error occurred" });
     }
 

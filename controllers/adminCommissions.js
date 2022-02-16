@@ -34,7 +34,7 @@ exports.updateCommissionRow = async (req, res) => {
       { _id: rowId },
       req.body
     );
-    if (updatedCommision.nModified != 1) {
+    if (updatedCommision.modifiedCount != 1) {
       return res.status(500).json({ error: "Failed to update row" });
     }
 

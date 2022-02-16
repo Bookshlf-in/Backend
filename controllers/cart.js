@@ -125,7 +125,7 @@ exports.changeCartItemPurchaseQty = async (req, res) => {
       { _id: cartItemId },
       { purchaseQty }
     ).exec();
-    if (updatedItem.nModified != 1) {
+    if (updatedItem.modifiedCount != 1) {
       return res.status(500).json({ error: "Failed to update quantity" });
     }
     res.json({ msg: "Changed purchase quantity" });
