@@ -19,11 +19,7 @@ exports.signUp = async (req, res) => {
         ],
       });
     } else if (existingUser && !existingUser.emailVerified) {
-      await Users.deleteOne({ email: req.body.email }, (error) => {
-        if (error) {
-          console.log("Error deleting existing user while signup", error);
-        }
-      });
+      await Users.deleteOne({ email: req.body.email });
     }
 
     const user = new Users(req.body);
