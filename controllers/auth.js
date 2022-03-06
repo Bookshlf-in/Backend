@@ -8,6 +8,7 @@ require("dotenv").config();
 
 exports.signUp = async (req, res) => {
   try {
+    console.log(req);
     const existingUser = await Users.findOne({ email: req.body.email });
     if (existingUser && existingUser.emailVerified) {
       return res.status(400).json({
@@ -24,7 +25,7 @@ exports.signUp = async (req, res) => {
 
     const user = new Users(req.body);
     await user.save();
-
+    console.log(user);
     sendEmailOtp(EMAIL_VERIFICATION, user.email);
 
     res.json({
