@@ -23,19 +23,13 @@ exports.signUp = async (req, res) => {
     }
 
     const user = new Users(req.body);
-    user.save((error, user) => {
-      if (error) {
-        return res.status(400).json({
-          error: "Not able to save user to DB",
-        });
-      }
+    await user.save();
 
-      sendEmailOtp(EMAIL_VERIFICATION, user.email);
+    sendEmailOtp(EMAIL_VERIFICATION, user.email);
 
-      res.json({
-        email: user.email,
-        roles: user.roles,
-      });
+    res.json({
+      email: user.email,
+      roles: user.roles,
     });
   } catch (error) {
     console.log("Error occurred in /signUp ", error);
