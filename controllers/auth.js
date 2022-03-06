@@ -38,7 +38,8 @@ exports.signUp = async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(error);
+    console.log("Error occurred in /signUp ", error);
+    res.status(500).json({ error: "Some error occurred" });
   }
 };
 
