@@ -15,8 +15,8 @@ exports.getUserList = async (req, res) => {
         .status(400)
         .json({ error: "noOfUsersInOnePage should be positive" });
     }
-    const userCount = await Users.countDocuments();
-    const userList = await Users.find()
+    const userCount = await Users.countDocuments({ emailVerified: true });
+    const userList = await Users.find({ emailVerified: true })
       .skip((page - 1) * noOfUsersInOnePage)
       .limit(noOfUsersInOnePage);
     const data = userList.map((user) => {
