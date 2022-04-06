@@ -2,6 +2,7 @@ const Orders = require("../models/orders");
 const SellerProfiles = require("../models/sellerProfiles");
 const SellerTransactions = require("../models/sellerTransactions");
 const Commissions = require("../models/commissions");
+const Books = require("../models/books");
 
 exports.getOrderList = async (req, res) => {
   try {
@@ -212,6 +213,7 @@ exports.markOrderAsCancelled = async (req, res) => {
     const order = await Orders.findOne({ _id: orderId }).select({
       _id: 1,
       status: 1,
+      bookId: 1,
     });
     if (!order) {
       return res.status(400).json({ error: "Order does not exist" });
@@ -228,6 +230,11 @@ exports.markOrderAsCancelled = async (req, res) => {
     if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as cancelled" });
     }
+    // update book
+    await Books.updateOne(
+      { _id: order.bookId },
+      { isAvailable: true, status: "Approved", $inc: { qty: 1 } }
+    );
     res.json({ msg: "Order updated" });
   } catch (error) {
     console.log("Error in /admin-cancelOrder ", error);

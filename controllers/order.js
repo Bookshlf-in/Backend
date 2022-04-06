@@ -404,6 +404,7 @@ exports.cancelOrder = async (req, res) => {
       progress: 1,
       status: { $slice: -1 },
       customerId: 1,
+      bookId: 1,
     });
     if (!order) {
       return res.status(400).json({ error: "Order not found" });
@@ -422,6 +423,11 @@ exports.cancelOrder = async (req, res) => {
     ).exec();
     if (updatedOrder.modifiedCount != 1)
       return res.json({ error: "Some error occurred" });
+    // update book
+    await Books.updateOne(
+      { _id: order.bookId },
+      { isAvailable: true, status: "Approved", $inc: { qty: 1 } }
+    );
     res.json({ msg: "Order cancelled" });
   } catch (error) {
     console.log("Error occurred in cancelOrder: ", error);
