@@ -1,6 +1,8 @@
 const SellerProfiles = require("../models/sellerProfiles.js");
 const Books = require("../models/books");
-const Tags = require("../models/tags");
+const User = require("../models/users");
+const CartItems = require("../models/cartItems");
+const WishlistItems = require("../models/wishlistItems");
 
 exports.getBestSellingBooks = async (req, res) => {
   try {
@@ -63,13 +65,71 @@ exports.getBestSellingBooks = async (req, res) => {
   }
 };
 
-// exports.getUserRecommendedBooks = async (req, res) => {
-//   try {
-//   } catch (error) {
-//     console.log("Error occurred in /getBestSellingBooks ", error);
-//     res.status(500).json({ error: "Some error occurred" });
-//   }
-// };
+exports.getUserRecommendedBooks = async (req, res) => {
+  try {
+    const userId = req.auth?._id;
+    const user = await User.findOne({ _id: userId });
+    let bookList;
+    if (userId && user.email === "rk57382@gmail.com") {
+      bookList = [
+        "61e7abf5f9c63c00230eb53c",
+        "616f2c86d896190023a95a69",
+        "616f2fbbd896190023a95bf9",
+        "61e71445e21a97002334620d",
+        "6165bcd5a2880d00228df884",
+        "61efe703ed66b70023555f2e",
+      ];
+    } else {
+      bookList = [
+        "616f2fbbd896190023a95bf9",
+        "61e307fb476dd00023ac44b4",
+        "616f2c86d896190023a95a69",
+        "61e7f4a1f9c63c00230ec540",
+        "60f2ecb26a7261002239e746",
+        "61e7abf5f9c63c00230eb53c",
+      ];
+    }
+    const books = await Promise.all(
+      bookList.map(async (bookId) => {
+        const book = await Books.findOne({ _id: bookId });
+        return book;
+      })
+    );
+    const data = await Promise.all(
+      books.map(async (book) => {
+        book = book._doc;
+        book.photo = book.photos?.length > 0 ? book.photos[0] : "";
+        delete book.photos;
+        const seller = (
+          await SellerProfiles.findOne({ _id: book.sellerId }).select({
+            _id: 0,
+            rating: 1,
+          })
+        )?._doc;
+        book.sellerRating = seller.rating;
+        book.wishlist = false;
+        book.cart = false;
+        if (userId) {
+          const wishlistItem = await WishlistItems.findOne({
+            userId,
+            bookId: book._id,
+          }).select({ _id: 1 });
+          if (wishlistItem) book.wishlist = true;
+          const cartItem = await CartItems.findOne({
+            userId,
+            bookId: book._id,
+          }).select({ _id: 1 });
+          if (cartItem) book.cart = true;
+        }
+        return book;
+      })
+    );
+    res.json(data);
+  } catch (error) {
+    console.log("Error occurred in /getBestSellingBooks ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
 
 exports.getRecommendedBooks = async (req, res) => {
   try {
@@ -80,7 +140,9 @@ exports.getRecommendedBooks = async (req, res) => {
     }
     const book = await Books.findOne({ _id: bookId });
     const tagArr = book.tags[0];
-    const recommendedBooks = await Books.find({ tags: { $in: tagArr } }).limit(6);
+    const recommendedBooks = await Books.find({ tags: { $in: tagArr } }).limit(
+      6
+    );
     const data = await Promise.all(
       recommendedBooks.map(async (book) => {
         book = book._doc;
