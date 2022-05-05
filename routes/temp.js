@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { getBestSellingBooks } = require("../controllers/temp");
+const { getBestSellingBooks, getRecommendedBooks } = require("../controllers/temp");
 
 router.get("/getBestSellingBooks", getBestSellingBooks);
 router.get("/getUserRecommendedBooks", getBestSellingBooks);
-router.get("/getRecommendedBooks", getBestSellingBooks);
+router.get("/getRecommendedBooks", getRecommendedBooks);
 
 module.exports = router;
