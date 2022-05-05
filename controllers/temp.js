@@ -80,7 +80,7 @@ exports.getRecommendedBooks = async (req, res) => {
     }
     const book = await Books.findOne({ _id: bookId });
     const tagArr = book.tags[0];
-    const recommendedBooks = await Books.find({ tags: { $in: tagArr } });
+    const recommendedBooks = await Books.find({ tags: { $in: tagArr } }).limit(6);
     const data = await Promise.all(
       recommendedBooks.map(async (book) => {
         book = book._doc;
