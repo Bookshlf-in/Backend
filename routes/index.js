@@ -27,6 +27,7 @@ const adminOrderRoutes = require("./adminOrder");
 const adminWalletRoutes = require("./adminWallet");
 const adminCommissionRoutes = require("./adminCommission");
 const adminEmail = require("./adminEmail");
+const getBestSellingBooks = require("./temp")
 
 router.use("/", authRoutes);
 router.use("/", accountRoutes);
@@ -54,5 +55,6 @@ router.use("/", adminOrderRoutes);
 router.use("/", adminWalletRoutes);
 router.use("/", adminCommissionRoutes);
 router.use("/", adminEmail);
+router.use("/", getBestSellingBooks);
 
 module.exports = router;
