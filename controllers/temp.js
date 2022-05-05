@@ -8,12 +8,12 @@ exports.getBestSellingBooks = async (req, res) => {
   try {
     const userId = req.auth?._id;
     const bookList = [
-      "61efe703ed66b70023555f2e",
       "616f2fbbd896190023a95bf9",
+      "61e307fb476dd00023ac44b4",
       "616f2c86d896190023a95a69",
+      "61e7f4a1f9c63c00230ec540",
+      "60f2ecb26a7261002239e746",
       "61e7abf5f9c63c00230eb53c",
-      "6165bcd5a2880d00228df884",
-      "61e71445e21a97002334620d",
     ];
     // const bookList = [
     //   "624d4e64715eb8bc116f1fd4",
