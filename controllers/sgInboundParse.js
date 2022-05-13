@@ -43,7 +43,7 @@ exports.sgInboundParse = async (req, res) => {
       content: [
         {
           type: "text/html",
-          value: email.text,
+          value: email.html || email.text,
         },
       ],
     });
