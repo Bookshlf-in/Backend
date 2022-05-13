@@ -11,30 +11,30 @@ const getDestinationEmail = (to) => {
     case "aman":
       return "vaman5629@gmail.com";
     default:
-      return "bookshlf.in@gmail.com";
+      return process.env.ADMIN_EMAIL;
   }
 };
 
 exports.sgInboundParse = async (req, res) => {
   try {
     const email = req.body;
-    console.log(email);
     const destinationEmail = getDestinationEmail(
-      JSON.parse(email.envelope).to
+      JSON.parse(email.envelope).to[0]
     );
-    const newEmail = {
+    await sgMail.send({
       personalizations: [
         {
           subject: email.subject,
           to: [
             {
+              name: JSON.parse(email.envelope).to[0],
               email: destinationEmail,
             },
           ],
         },
       ],
       from: {
-        email: "inbound@bookshlf.in",
+        email: "forward@bookshlf.in",
         name: email.from,
       },
       reply_to: {
@@ -46,9 +46,8 @@ exports.sgInboundParse = async (req, res) => {
           value: email.text,
         },
       ],
-    };
-    sgMail.send(newEmail);
-    res.json({ msg: "Email send successfully" });
+    });
+    res.status(200).send();
   } catch (error) {
     console.log("Error in /sgInboundParse ", error);
     res.status(500).json({ error: "Some error occurred" });
