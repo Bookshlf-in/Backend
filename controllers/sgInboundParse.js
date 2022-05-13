@@ -9,7 +9,7 @@ const getDestinationEmail = (from) => {
     case "abhishek":
       return "abhishekworks787@gmail.com";
     case "aman":
-      return "amanverma160400@gmail.com";
+      return "vaman5629@gmail.com";
     default:
       return "bookshlf.in@gmail.com";
   }
@@ -18,7 +18,9 @@ const getDestinationEmail = (from) => {
 exports.sgInboundParse = async (req, res) => {
   try {
     const email = req.body;
-    const destinationEmail = getDestinationEmail(req.body.envelope.from);
+    const destinationEmail = getDestinationEmail(
+      JSON.parse(email.envelope).from
+    );
     const newEmail = {
       personalizations: [
         {
@@ -35,7 +37,7 @@ exports.sgInboundParse = async (req, res) => {
         name: email.from,
       },
       reply_to: {
-        email: email.envelope.from,
+        email: JSON.parse(email.envelope).from,
       },
       content: [
         {
