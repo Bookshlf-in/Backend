@@ -2,8 +2,8 @@ require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const getDestinationEmail = (from) => {
-  switch (from.split("@")[0]) {
+const getDestinationEmail = (to) => {
+  switch (to.split("@")[0]) {
     case "rohit":
       return "rk57382@gmail.com";
     case "abhishek":
@@ -18,8 +18,9 @@ const getDestinationEmail = (from) => {
 exports.sgInboundParse = async (req, res) => {
   try {
     const email = req.body;
+    console.log(email);
     const destinationEmail = getDestinationEmail(
-      JSON.parse(email.envelope).from
+      JSON.parse(email.envelope).to
     );
     const newEmail = {
       personalizations: [
