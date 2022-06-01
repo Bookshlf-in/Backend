@@ -28,6 +28,7 @@ const adminWalletRoutes = require("./adminWallet");
 const adminCommissionRoutes = require("./adminCommission");
 const adminEmail = require("./adminEmail");
 const sgInboundParse = require("./sgInboundParse");
+const proxy = require("./proxy");
 
 router.use("/", authRoutes);
 router.use("/", accountRoutes);
@@ -56,5 +57,6 @@ router.use("/", adminWalletRoutes);
 router.use("/", adminCommissionRoutes);
 router.use("/", adminEmail);
 router.use("/", sgInboundParse);
+router.use("/", proxy);
 
 module.exports = router;
