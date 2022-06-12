@@ -196,7 +196,7 @@ exports.purchaseBook = async (req, res) => {
       shippingCharges,
       orderTotal,
       status: ["Order placed"],
-      expectedDeliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      expectedDeliveryDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
     });
     order.save((error, order) => {
       if (error) {
@@ -279,7 +279,7 @@ exports.purchaseCart = async (req, res) => {
       customerId: req.auth._id,
       customerAddress,
       status: ["Order placed"],
-      expectedDeliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      expectedDeliveryDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
     };
     const cartItems = await CartItems.find({ userId: req.auth._id }).exec();
     if (cartItems.length == 0) {
