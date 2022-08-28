@@ -8,7 +8,7 @@ exports.getOrderList = async (req, res) => {
   try {
     const page = req.query.page || 1;
     const noOfOrdersInOnePage = Number(req.query.noOfOrdersInOnePage) || 10;
-    const active = Boolean(req.query.active) || false;
+    const status = req.query.status;
     if (page < 1) {
       return res.status(400).json({ error: "page value should be positive" });
     }
@@ -18,8 +18,8 @@ exports.getOrderList = async (req, res) => {
         .json({ error: "noOfOrdersInOnePage should be positive" });
     }
     let findObj = {};
-    if (active) {
-      findObj = { progress: { $ne: 100 } };
+    if (status) {
+      findObj = { $expr: { $eq: [{ $last: "$status" }, status] } };
     }
     const orderCount = await Orders.countDocuments(findObj);
     const orderList = await Orders.find(findObj)
