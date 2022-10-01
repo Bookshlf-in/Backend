@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const messageSchema = mongoose.Schema(
   {
+    queryType: {
+      type: String,
+      default: "GENERAL",
+    },
     name: {
       type: String,
       trim: true,
@@ -21,6 +25,12 @@ const messageSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
+    },
+    phoneNo: {
+      type: Number,
+    },
+    orderId: {
+      type: mongoose.Types.ObjectId,
     },
     read: {
       type: Boolean,
