@@ -13,7 +13,14 @@ exports.getMessageList = async (req, res) => {
         .json({ error: "noOfMessagesInOnePage should be positive" });
     }
     const messageCount = await Messages.countDocuments();
-    const messages = await Messages.find()
+    let findObj = {};
+    if (req.query.queryType) {
+      findObj.queryType = req.query.queryType;
+    }
+    if (req.query.read) {
+      findObj.read = req.query.read == "true" ? true : false;
+    }
+    const messages = await Messages.find(findObj)
       .sort({ createdAt: -1 })
       .skip((page - 1) * noOfMessagesInOnePage)
       .limit(noOfMessagesInOnePage)
