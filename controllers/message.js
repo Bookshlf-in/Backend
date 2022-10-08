@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Messages = require("../models/messages");
 const Users = require("../models/users");
 
@@ -16,6 +17,18 @@ exports.sendMessage = async (req, res) => {
       return res
         .status(400)
         .json({ errors: [{ error: "Email required", param: "email" }] });
+    }
+    if (req.body.queryType === "ORDER_HELP") {
+      if (
+        req.body.orderId &&
+        !mongoose.Types.ObjectId.isValid(req.body.orderId)
+      ) {
+        return res
+          .status(400)
+          .json({ errors: [{ error: "Invalid order id", param: "orderId" }] });
+      }
+    } else if (req.body.orderId) {
+      delete req.body.orderId;
     }
     const message = new Messages(req.body);
     message.save((error, message) => {
