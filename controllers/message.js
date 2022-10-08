@@ -27,7 +27,7 @@ exports.sendMessage = async (req, res) => {
           .status(400)
           .json({ errors: [{ error: "Invalid order id", param: "orderId" }] });
       }
-    } else if (req.body.orderId) {
+    } else {
       delete req.body.orderId;
     }
     const message = new Messages(req.body);
