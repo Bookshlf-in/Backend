@@ -97,6 +97,15 @@ const orderSchema = mongoose.Schema(
     adminDeliveryExpense: {
       type: Number,
     },
+    awbNo: {
+      type: String,
+    },
+    adminPrivateMessage: {
+      type: String,
+    },
+    shipmentLabelLink: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
