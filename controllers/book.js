@@ -4,6 +4,7 @@ const SellerProfiles = require("../models/sellerProfiles");
 const CartItems = require("../models/cartItems");
 const WishlistItems = require("../models/wishlistItems");
 const Commissions = require("../models/commissions");
+const { update } = require("../models/books");
 
 const isValidISBN = (isbn) => {
   let n = isbn.length;
@@ -119,6 +120,7 @@ exports.getBookDetails = async (req, res) => {
           ISBN: 1,
           embedVideo: 1,
           sellerId: 1,
+          isAvailable: 1,
           createdAt: 1,
           updatedAt: 1,
         })
@@ -230,38 +232,37 @@ exports.deleteBook = (req, res) => {
   });
 };
 
-exports.updateBook = (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.bookId)) {
-    return res.status(400).json({ error: "Book does not exist" });
-  }
-  const query = Books.findOne({ _id: req.body.bookId }).select({
-    _id: 0,
-    sellerId: 1,
-  });
-  query.exec((error, book) => {
-    if (error || !book || book.status == "Deleted") {
-      if (error) {
-        console.log("Error finding book in /updateBook", error);
-      }
+exports.updateBook = async (req, res) => {
+  try {
+    const bookId = req.body.bookId;
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      return res.status(400).json({ error: "Book does not exist" });
+    }
+    const book = await Books.findOne({ _id: bookId }).select({
+      _id: 0,
+      sellerId: 1,
+    });
+    if (!book || book.status == "Deleted") {
       return res.status(400).json({
         error: "Book does not exist",
       });
-    } else if (!book.sellerId.equals(req.auth.sellerId)) {
+    }
+    if (!book.sellerId.equals(req.auth.sellerId)) {
       return res.status(401).json({
         error: "You are not authorized to update this book",
       });
-    } else {
-      Books.updateOne({ _id: req.body.bookId }, req.body, (error, book) => {
-        if (error || !book) {
-          if (error) {
-            console.log("Error updating Book in /UpdateBook", error);
-          }
-          return res.status(400).json({
-            error: "Book does not exist",
-          });
-        }
-        return res.json({ msg: "Book updated" });
-      });
     }
-  });
+    let bookObj = req.body;
+    bookObj.status = "Approval Pending";
+    bookObj.adminMessage = "";
+    bookObj.isApproved = false;
+    bookObj.isAvailable = false;
+    const updatedBook = await Books.updateOne({ _id: bookId }, bookObj);
+    if (updatedBook.modifiedCount != 1)
+      return res.json({ error: "Failed to update book" });
+    res.json({ msg: "Book updated" });
+  } catch (error) {
+    console.log("Error occurred in /updateBook: ", error);
+    res.status(500).json({ error: "Some error occured" });
+  }
 };
