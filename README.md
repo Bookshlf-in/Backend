@@ -3,7 +3,8 @@
   <h1 align="center">Bookshlf Backend</h1>
 </p>
 
-Bookshlf is an online second-hand book store. Have a look on it [here](https://bookshlf.in).
+- Bookshlf is an online eCommerce Store to buy & sell used books. 
+- Have a look on it [here](https://bookshlf.in).
 
 This Respository contains backend APIs of [Bookshlf](https://github.com/Bookshlf-in/Website).
 
