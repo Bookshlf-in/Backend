@@ -29,6 +29,7 @@ const adminCommissionRoutes = require("./adminCommission");
 const adminEmail = require("./adminEmail");
 const sgInboundParse = require("./sgInboundParse");
 const proxy = require("./proxy");
+const temp = require("./temp");
 
 router.use("/", authRoutes);
 router.use("/", accountRoutes);
@@ -58,5 +59,6 @@ router.use("/", adminCommissionRoutes);
 router.use("/", adminEmail);
 router.use("/", sgInboundParse);
 router.use("/", proxy);
+router.use("/", temp);
 
 module.exports = router;
