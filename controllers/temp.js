@@ -10,7 +10,7 @@ exports.lucknowData = async (req, res) => {
     let data = await Promise.all(books.map(async (book) => {
         const obj = book._doc;
         const pickupAddressId = book.pickupAddressId;
-        const address = await Addresses.findOne({_id: pickupAddressId, city: {$regex: /lucknow/i }});
+        const address = await Addresses.findOne({_id: pickupAddressId, city: {$regex: /kanpur/i }});
         if(!address) return null;
         obj.address = address;
         const seller = await SellerProfiles.findOne({_id: book.sellerId});
