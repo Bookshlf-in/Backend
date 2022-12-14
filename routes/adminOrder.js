@@ -16,6 +16,7 @@ const {
   markOrderAsCompleted,
   markOrderAsCancelled,
   sendSellerPayment,
+  purchaseBook,
 } = require("../controllers/adminOrder");
 
 const checkOrderId = [
@@ -115,6 +116,25 @@ router.post(
   checkOrderId,
   handleValidationError,
   sendSellerPayment
+);
+
+router.post(
+  "/admin-purchaseBook",
+  isSignedIn,
+  [
+    check("bookId").notEmpty().withMessage("Book Id is required"),
+    check("customerId").notEmpty().withMessage("Customer Id is required"),
+    check("customerAddressId")
+      .notEmpty()
+      .withMessage("Customer Address is required"),
+    check("purchaseQty")
+      .notEmpty()
+      .withMessage("Quantity is required")
+      .isInt({ min: 1 })
+      .withMessage("Only positive numeric value acceptable"),
+  ],
+  handleValidationError,
+  purchaseBook
 );
 
 module.exports = router;

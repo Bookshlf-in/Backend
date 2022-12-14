@@ -3,6 +3,11 @@ const SellerProfiles = require("../models/sellerProfiles");
 const SellerTransactions = require("../models/sellerTransactions");
 const Commissions = require("../models/commissions");
 const Books = require("../models/books");
+const Users = require("../models/users");
+const Addresses = require("../models/addresses");
+const mongoose = require("mongoose");
+
+const { getShippingCharge } = require("../functions/charges");
 
 exports.getOrderList = async (req, res) => {
   try {
@@ -308,6 +313,167 @@ exports.sendSellerPayment = async (req, res) => {
     res.json({ msg: `Paid ${price} to seller` });
   } catch (error) {
     console.log("Error in /admin-sendSellerPayment ", error);
+    res.status(500).json({ error: "Some error occurred" });
+  }
+};
+
+exports.purchaseBook = async (req, res) => {
+  try {
+    const { bookId, purchaseQty, customerId, customerAddressId } = req.body;
+    const errors = [];
+    let book, customer, customerAddress;
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      errors.push({
+        error: "Book does not exist",
+        param: "bookId",
+      });
+    } else {
+      book = (
+        await Books.findOne({ _id: bookId, isAvailable: true })
+          .select({
+            _id: 1,
+            title: 1,
+            photos: { $slice: 1 },
+            author: 1,
+            MRP: 1,
+            price: 1,
+            weightInGrams: 1,
+            pickupAddressId: 1,
+            sellerId: 1,
+            sellerName: 1,
+            qty: 1,
+          })
+          .exec()
+      )?._doc;
+      if (!book) {
+        errors.push({
+          error: "Book not available",
+          param: "bookId",
+        });
+      }
+    }
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      errors.push({
+        error: "Customer does not exist",
+        param: "customerId",
+      });
+    } else {
+      customer = (
+        await Users.findOne({
+          _id: customerId,
+        })
+          .select({
+            _id: 1,
+            name: 1,
+          })
+          .exec()
+      )?._doc;
+      if (!customer) {
+        errors.push({
+          error: "Customer does not exist",
+          param: "customerId",
+        });
+      }
+    }
+    if (!mongoose.Types.ObjectId.isValid(customerAddressId)) {
+      errors.push({
+        error: "Address does not exist",
+        param: "customerAddressId",
+      });
+    } else {
+      customerAddress = (
+        await Addresses.findOne({
+          _id: customerAddressId,
+        })
+          .select({
+            _id: 1,
+            address: 1,
+            city: 1,
+            state: 1,
+            zipCode: 1,
+            countryCode: 1,
+            phoneNo: 1,
+          })
+          .exec()
+      )?._doc;
+      if (!customerAddress) {
+        errors.push({
+          error: "Address does not exist",
+          param: "customerAddressId",
+        });
+      }
+    }
+    if (book && purchaseQty > book.qty) {
+      errors.push({
+        error: "Purchase qty cannot be greater than stock available",
+        param: "purchaseQty",
+      });
+    }
+    if (errors.length > 0) return res.status(400).json({ errors });
+    const sellerAddress = (
+      await Addresses.findOne({
+        _id: book.pickupAddressId,
+      })
+        .select({
+          _id: 1,
+          address: 1,
+          city: 1,
+          state: 1,
+          zipCode: 1,
+          countryCode: 1,
+          phoneNo: 1,
+        })
+        .exec()
+    )?._doc;
+    delete book.pickupAddressId;
+    book.bookId = book._id;
+    delete book._id;
+    book.photo = book.photos.length > 0 ? book.photos[0] : "";
+    delete book.photos;
+    book.weightInGrams = book.weightInGrams * purchaseQty;
+    const shippingCharges = getShippingCharge(book.price * purchaseQty);
+    const orderTotal = purchaseQty * book.price + shippingCharges;
+    const order = new Orders({
+      customerName: customer.name,
+      customerId: customer._id,
+      ...book,
+      purchaseQty,
+      sellerAddress,
+      customerAddress,
+      shippingCharges,
+      orderTotal,
+      status: ["Order placed"],
+      expectedDeliveryDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+    });
+    order.save((error, order) => {
+      if (error) {
+        throw error;
+      }
+      const newQty = book.qty - order.purchaseQty;
+      let updateObj = {};
+      if (newQty <= 0) {
+        updateObj = {
+          qty: newQty,
+          isAvailable: false,
+          status: "Sold",
+        };
+      } else {
+        updateObj = {
+          qty: newQty,
+        };
+      }
+      Books.updateOne({ _id: order.bookId }, updateObj).exec(
+        (error, updatedBook) => {
+          if (error) {
+            Orders.deleteOne({ _id: order._id });
+            throw error;
+          }
+          res.json({ msg: "Order placed" });
+        }
+      );
+    });
+  } catch (error) {
+    console.log("Error occurred in admin purchase book: ", error);
     res.status(500).json({ error: "Some error occurred" });
   }
 };
