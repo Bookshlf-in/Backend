@@ -34,6 +34,7 @@ exports.getMonthOrderStats = async (req, res) => {
       orders.map(async (order) => {
         stats.totalOrders++;
         const orderStatus = order.status.at(-1);
+        order.adminDeliveryExpense ||= 0;
         switch (orderStatus) {
           case "Order placed":
             stats.placed++;
