@@ -1,6 +1,7 @@
 const { EMAIL_VERIFICATION, PASSWORD_RESET } = require("../email/otp.types");
 const EmailOtp = require("../models/emailOtps");
 const Users = require("../models/users");
+const AdminPermissions = require("../models/adminPermissions");
 const sendEmailOtp = require("../email/sendEmailOtp");
 const { v1: uuidv1 } = require("uuid");
 const crypto = require("crypto");
@@ -228,7 +229,7 @@ exports.getUserProfile = async (req, res) => {
   try {
     const user = await Users.findOne({ _id: req.auth._id })
       .select({
-        _id: 0,
+        _id: 1,
         name: 1,
         roles: 1,
         email: 1,
@@ -238,6 +239,15 @@ exports.getUserProfile = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({ error: "User does not exist" });
+    }
+    if (user.roles.includes("admin")) {
+      const adminPermissions = await AdminPermissions.findOne({
+        userId: user._id,
+      }).select({ permissions: 1 });
+      return res.json({
+        ...user._doc,
+        adminPermissions: adminPermissions.permissions,
+      });
     }
     res.json(user);
   } catch (error) {

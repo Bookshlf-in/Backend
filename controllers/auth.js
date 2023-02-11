@@ -1,4 +1,5 @@
 const Users = require("../models/users");
+const AdminPermissions = require("../models/adminPermissions");
 const SellerProfiles = require("../models/sellerProfiles");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
@@ -147,6 +148,26 @@ exports.isAdmin = (req, res, next) => {
     }
     next();
   });
+};
+
+exports.checkAdminPermission = (role) => {
+  return (req, res, next) => {
+    const query = AdminPermissions.findOne({ userId: req.auth._id }).select({
+      permissions: 1,
+    });
+    query.exec((error, adminPermission) => {
+      if (
+        error ||
+        !adminPermission ||
+        !adminPermission.permissions.includes(role)
+      ) {
+        return res.status(403).json({
+          error: "You don't have required permission",
+        });
+      }
+      next();
+    });
+  };
 };
 
 exports.isSeller = (req, res, next) => {

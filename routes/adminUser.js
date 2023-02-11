@@ -5,7 +5,11 @@ const { check } = require("express-validator");
 
 const { emailToLowerCase } = require("../functions/emailToLowerCase");
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getUserList,
   getUserProfile,
@@ -21,12 +25,19 @@ const checkUserId = [
     .withMessage("Invalid User Id"),
 ];
 
-router.get("/admin-getUserList", isSignedIn, isAdmin, getUserList);
+router.get(
+  "/admin-getUserList",
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission("USERS"),
+  getUserList
+);
 
 router.get(
   "/admin-getUserProfile",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("USERS"),
   emailToLowerCase,
   getUserProfile
 );
@@ -35,6 +46,7 @@ router.get(
   "/admin-getUserAddressList",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("USERS"),
   checkUserId,
   handleValidationError,
   getUserAddressList
@@ -43,6 +55,7 @@ router.get(
   "/admin-getUserOrderList",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("USERS"),
   checkUserId,
   handleValidationError,
   getUserOrderList

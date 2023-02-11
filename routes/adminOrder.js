@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const { check } = require("express-validator");
 
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getOrderList,
   getOrderDetails,
@@ -27,12 +31,19 @@ const checkOrderId = [
     .withMessage("Invalid Order Id"),
 ];
 
-router.get("/admin-getOrderList", isSignedIn, isAdmin, getOrderList);
+router.get(
+  "/admin-getOrderList",
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission("ORDERS"),
+  getOrderList
+);
 
 router.get(
   "/admin-getOrderDetails",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   getOrderDetails
@@ -42,6 +53,7 @@ router.post(
   "/admin-updateOrder",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   updateOrder
@@ -51,6 +63,7 @@ router.post(
   "/admin-changeOrderProgress",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   [
     check("progress")
@@ -67,6 +80,7 @@ router.post(
   "/admin-addOrderStatus",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   [check("status").notEmpty().withMessage("Status required")],
   handleValidationError,
@@ -77,6 +91,7 @@ router.post(
   "/admin-markOrderAsPacked",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   markOrderAsPacked
@@ -86,6 +101,7 @@ router.post(
   "/admin-markOrderAsShipped",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   markOrderAsShipped
@@ -95,6 +111,7 @@ router.post(
   "/admin-markOrderAsCompleted",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   markOrderAsCompleted
@@ -104,6 +121,7 @@ router.post(
   "/admin-markOrderAsCancelled",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   markOrderAsCancelled
@@ -113,6 +131,7 @@ router.post(
   "/admin-sendSellerPayment",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("ORDERS"),
   checkOrderId,
   handleValidationError,
   sendSellerPayment
@@ -121,6 +140,8 @@ router.post(
 router.post(
   "/admin-purchaseBook",
   isSignedIn,
+  isAdmin,
+  checkAdminPermission("ORDERS"),
   [
     check("bookId").notEmpty().withMessage("Book Id is required"),
     check("customerId").notEmpty().withMessage("Customer Id is required"),

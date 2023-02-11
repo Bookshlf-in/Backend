@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const { check } = require("express-validator");
 
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getWithdrawRequests,
   getWithdrawRequest,
@@ -17,6 +21,7 @@ router.get(
   "/admin-getWithdrawRequests",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("WALLET"),
   getWithdrawRequests
 );
 
@@ -24,6 +29,7 @@ router.get(
   "/admin-getWithdrawRequest",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("WALLET"),
   [
     check("requestId")
       .notEmpty()
@@ -39,6 +45,7 @@ router.post(
   "/admin-cancelWithdrawRequest",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("WALLET"),
   [
     check("requestId")
       .notEmpty()
@@ -54,6 +61,7 @@ router.post(
   "/admin-withdrawRequestMarkComplete",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("WALLET"),
   [
     check("requestId")
       .notEmpty()
@@ -70,6 +78,7 @@ router.get(
   "/admin-getSellerTransactionList",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("WALLET"),
   [
     check("sellerId")
       .notEmpty()

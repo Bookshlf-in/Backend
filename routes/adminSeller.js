@@ -5,7 +5,11 @@ const { check } = require("express-validator");
 
 const { emailToLowerCase } = require("../functions/emailToLowerCase");
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getSellerList,
   getSellerProfile,
@@ -23,12 +27,19 @@ const checkSellerId = [
     .withMessage("Invalid Seller Id"),
 ];
 
-router.get("/admin-getSellerList", isSignedIn, isAdmin, getSellerList);
+router.get(
+  "/admin-getSellerList",
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission("SELLERS"),
+  getSellerList
+);
 
 router.get(
   "/admin-getSellerProfile",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("SELLERS"),
   emailToLowerCase,
   getSellerProfile
 );
@@ -37,6 +48,7 @@ router.get(
   "/admin-getSellerBookList",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("SELLERS"),
   checkSellerId,
   handleValidationError,
   getSellerBookList
@@ -46,6 +58,7 @@ router.get(
   "/admin-getSellerAddressList",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("SELLERS"),
   checkSellerId,
   handleValidationError,
   getSellerAddressList
@@ -55,6 +68,7 @@ router.post(
   "/admin-markSellerAsVerified",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("SELLERS"),
   checkSellerId,
   handleValidationError,
   markSellerAsVerified
@@ -64,6 +78,7 @@ router.post(
   "/admin-markSellerAsUnverified",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("SELLERS"),
   checkSellerId,
   handleValidationError,
   markSellerAsUnverified

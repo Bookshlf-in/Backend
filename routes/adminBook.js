@@ -4,7 +4,11 @@ const { check } = require("express-validator");
 const mongoose = require("mongoose");
 
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getBookList,
   getBookDetails,
@@ -22,12 +26,19 @@ const checkBookId = [
     .withMessage("Invalid Book Id"),
 ];
 
-router.get("/admin-getBookList", isSignedIn, isAdmin, getBookList);
+router.get(
+  "/admin-getBookList",
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission("BOOKS"),
+  getBookList
+);
 
 router.get(
   "/admin-getBookDetails",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("BOOKS"),
   checkBookId,
   handleValidationError,
   getBookDetails
@@ -37,6 +48,7 @@ router.post(
   "/admin-updateBookDetails",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("BOOKS"),
   checkBookId,
   handleValidationError,
   updateBookDetails
@@ -46,6 +58,7 @@ router.post(
   "/admin-approveBook",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("BOOKS"),
   checkBookId,
   handleValidationError,
   approveBook
@@ -55,6 +68,7 @@ router.post(
   "/admin-rejectBookApproval",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("BOOKS"),
   checkBookId,
   [check("message").notEmpty().withMessage("Rejection message is required")],
   handleValidationError,
@@ -65,6 +79,7 @@ router.delete(
   "/admin-deleteBook",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("BOOKS"),
   checkBookId,
   handleValidationError,
   deleteBook

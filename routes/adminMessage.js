@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const { check } = require("express-validator");
 
 const { handleValidationError } = require("../functions/validator");
-const { isSignedIn, isAdmin } = require("../controllers/auth");
+const {
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission,
+} = require("../controllers/auth");
 const {
   getMessageList,
   markMessageAsRead,
@@ -20,12 +24,19 @@ const checkMessageId = [
     .withMessage("Invalid Message Id"),
 ];
 
-router.get("/admin-getMessageList", isSignedIn, isAdmin, getMessageList);
+router.get(
+  "/admin-getMessageList",
+  isSignedIn,
+  isAdmin,
+  checkAdminPermission("MESSAGES"),
+  getMessageList
+);
 
 router.post(
   "/admin-markMessageAsRead",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("MESSAGES"),
   checkMessageId,
   handleValidationError,
   markMessageAsRead
@@ -35,6 +46,7 @@ router.post(
   "/admin-markMessageAsUnread",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("MESSAGES"),
   checkMessageId,
   handleValidationError,
   markMessageAsUnread
@@ -44,6 +56,7 @@ router.delete(
   "/admin-deleteMessage",
   isSignedIn,
   isAdmin,
+  checkAdminPermission("MESSAGES"),
   checkMessageId,
   handleValidationError,
   deleteMessage
