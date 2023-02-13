@@ -10,6 +10,10 @@ const getDestinationEmail = (to) => {
       return "abhishekworks787@gmail.com";
     case "aman":
       return "vaman5629@gmail.com";
+    case "ritu.kumari":
+      return "Kritu1113@gmail.com";
+    case "ashutosh.singh":
+      return "ashutoshsingh202003@gmail.com";
     default:
       return process.env.ADMIN_EMAIL;
   }
