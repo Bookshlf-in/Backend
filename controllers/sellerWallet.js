@@ -1,7 +1,6 @@
 const SellerProfiles = require("../models/sellerProfiles");
 const SellerTransactions = require("../models/sellerTransactions");
 const WithdrawRequests = require("../models/withdrawRequests");
-const sendEmail = require("../email/sendEmail");
 
 exports.getCurrentBalance = async (req, res) => {
   try {
@@ -45,9 +44,6 @@ exports.withdrawFromWallet = async (req, res) => {
       status: "INITIATED",
     });
     const newWithdrawRequest = await withdrawRequest.save();
-
-    const mailText = `<p>Seller Id: ${sellerId} <br> Request Id: ${newWithdrawRequest._id}</p>`;
-    sendEmail("New withdraw request", mailText, process.env.ADMIN_EMAIL);
 
     res.json({ msg: "Withdraw request initiated", ...newWithdrawRequest._doc });
   } catch (error) {

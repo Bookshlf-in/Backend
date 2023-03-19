@@ -5,7 +5,6 @@ const Books = require("../models/books");
 const Addresses = require("../models/addresses");
 const Orders = require("../models/orders");
 const CartItems = require("../models/cartItems");
-const sendEmail = require("../email/sendEmail");
 
 const { getShippingCharge } = require("../functions/charges");
 
@@ -221,8 +220,6 @@ exports.purchaseBook = async (req, res) => {
             Orders.deleteOne({ _id: order._id });
             throw error;
           }
-          const mailText = `<p>Order Id: ${order._id}</p>`;
-          sendEmail("New order placed", mailText, process.env.ADMIN_EMAIL);
           res.json({ msg: "Order placed" });
         }
       );
@@ -382,11 +379,6 @@ exports.purchaseCart = async (req, res) => {
       })
     );
     await CartItems.deleteMany({ userId: req.auth._id });
-    sendEmail(
-      "New order placed",
-      "Someone purchase cart",
-      process.env.ADMIN_EMAIL
-    );
     res.json({ msg: "Order placed" });
   } catch (error) {
     console.log("Error occurred in purchase cart: ", error);
