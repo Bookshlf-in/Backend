@@ -235,11 +235,12 @@ exports.markOrderAsCancelled = async (req, res) => {
     if (updatedOrder.modifiedCount !== 1) {
       return res.status(500).json({ error: "Failed to mark as cancelled" });
     }
-    // update book
-    await Books.updateOne(
-      { _id: order.bookId },
-      { isAvailable: true, status: "Approved", $inc: { qty: 1 } }
-    );
+    if (req.body.markBookAsAvailable) {
+      await Books.updateOne(
+        { _id: order.bookId },
+        { isAvailable: true, status: "Approved", $inc: { qty: 1 } }
+      );
+    }
     res.json({ msg: "Order updated" });
   } catch (error) {
     console.log("Error in /admin-cancelOrder ", error);
