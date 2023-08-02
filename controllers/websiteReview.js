@@ -91,7 +91,7 @@ exports.getTopWebsiteReviews = async (req, res) => {
       review: { $nin: [undefined, ""] },
       rating: 5,
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .limit(10)
       .select({
         userName: 1,
