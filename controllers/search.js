@@ -43,7 +43,8 @@ exports.search = async (req, res) => {
           },
         },
       };
-      if (tag === "ALL") findObj = { isAvailable: true };
+      if (tag === "ALL")
+        findObj = { isAvailable: true, sellerId: "61ea1af611af83002056e1a0" };
       const dataCount = await Books.countDocuments(findObj);
       if (!sortObj.updatedAt && !sortObj.price) {
         sortObj.updatedAt = "desc";
@@ -124,7 +125,10 @@ exports.search = async (req, res) => {
     let bookCount = 0;
     searchResults = searchResults
       .map((obj) => {
-        if (obj.isAvailable) {
+        if (
+          obj.isAvailable &&
+          obj.sellerId?.toString() === "61ea1af611af83002056e1a0"
+        ) {
           const newObj = {
             _id: obj._id,
             title: obj.title,
@@ -206,7 +210,10 @@ exports.searchTitle = async (req, res) => {
     ]).limit(10);
     titleList = searchResults
       .map((obj) => {
-        if (obj.isAvailable) {
+        if (
+          obj.isAvailable &&
+          obj.sellerId?.toString() === "61ea1af611af83002056e1a0"
+        ) {
           return { title: obj.title };
         }
       })
